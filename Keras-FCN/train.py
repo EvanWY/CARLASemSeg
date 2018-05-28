@@ -20,6 +20,7 @@ import time
 import sklearn
 from sklearn.model_selection import train_test_split
 import keras
+import datetime
 
 def zerg_generator(samples, batch_size=20):
     num_samples = len(samples)
@@ -103,7 +104,6 @@ class FitGenCallback(keras.callbacks.Callback):
         
         z = np.zeros([20,320,320,3])
         z[0,:,:,:] = rgb
-        print (z.shape)
         seg = self.model.predict(z)[0,:,:,:]
         seg = seg.reshape(320,320,2)
         seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
@@ -113,7 +113,11 @@ class FitGenCallback(keras.callbacks.Callback):
         rgb[:,:,0] += seg_road
         rgb[:,:,1] += seg_vehicle
 
-        cv2.imwrite('visualize_imgs/seg_epoch%i.png' % epoch, rgb)
+        cv2.imwrite('visualize_imgs/seg-epoch_%3d.png' % epoch, rgb)
+
+        if (epoch % 20 == 1):
+            self.model.save('zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch))
+
         return
 
 if __name__ == '__main__':
@@ -135,11 +139,11 @@ if __name__ == '__main__':
     model.fit_generator(
         train_generator,
         steps_per_epoch = 45, 
-        epochs = 12,
+        epochs = 60,
         validation_data = validation_generator, 
         validation_steps = 5,
         callbacks = [FitGenCallback()]
     )
 
-    model.save('zerg_model.h5')
+    model.save('zerg_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S"))
     exit()
