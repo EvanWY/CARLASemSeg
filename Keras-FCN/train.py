@@ -21,6 +21,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 import keras
 import datetime
+import random
 
 def zerg_generator(samples, batch_size=20):
     num_samples = len(samples)
@@ -32,9 +33,19 @@ def zerg_generator(samples, batch_size=20):
             rgb_imgs = []
             seg_imgs = []
             for batch_sample in batch_samples:
-                rgb = cv2.resize(cv2.imread(batch_sample[0]), (320, 320), interpolation = cv2.INTER_CUBIC)
+                rgb_fullsize = cv2.imread(batch_sample[0])
+                raw_seg_fullsize = cv2.imread(batch_sample[1])
+
+                t = 600 - random.randint(0,12)
+                b = 0 + random.randint(0,12)
+                r = 800 - random.randint(0,16)
+                l = 0 + random.randint(0,16)
+                rgb_crop = rgb_fullsize[b:t, l:r]
+                raw_seg_crop = raw_seg_fullsize[b:t, l:r]
                 
-                raw_seg = cv2.resize(cv2.imread(batch_sample[1]), (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
+
+                rgb = cv2.resize(rgb_crop, (320, 320), interpolation = cv2.INTER_CUBIC)
+                raw_seg = cv2.resize(raw_seg_crop, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
                 seg_road = np.logical_or(raw_seg == 7 ,raw_seg == 6).astype(np.uint8)
                 seg_vehicle = (raw_seg == 10).astype(np.uint8)
                 seg = np.zeros((320, 320, 2)).astype(np.uint8)
