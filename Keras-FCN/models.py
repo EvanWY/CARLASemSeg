@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from pylab import *
 import os
 import sys
-from keras_contrib.applications import densenet
+#from keras_contrib.applications import densenet
 from keras.models import Model
 from keras.regularizers import l2
 from keras.layers import *
