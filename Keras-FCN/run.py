@@ -67,7 +67,7 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[1, 320, 320, 3]
 
 file = sys.argv[-1]
 
-if file == 'demo.py':
+if file == 'run.py':
   print ("Error loading video")
   quit
 
