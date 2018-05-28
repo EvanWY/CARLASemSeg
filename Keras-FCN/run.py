@@ -99,7 +99,7 @@ for rgb_frame in video:
     seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
     seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
 
-    answer_key[frame] = [encode(seg_vehicle_fullsize), encode(seg_road_fullsize)]
+    answer_key[frame] = [encode(seg_road_fullsize), encode(seg_vehicle_fullsize)]
     
     # Increment frame
     frame+=1
