@@ -1,4 +1,5 @@
 pip install sklearn
+pip install sk-video
 cd /home/workspace/keras-contrib
 python setup.py install
 cd /home/workspace/CARLASemSeg/Keras-FCN/utils

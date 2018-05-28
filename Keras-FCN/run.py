@@ -68,15 +68,15 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[1, 320, 320, 3]
 file = sys.argv[-1]
 
 if file == 'run.py':
-  print ("Error loading video")
-  quit
+    print ("Error loading video")
+    quit
 
 # Define encoder function
 def encode(array):
-	pil_img = Image.fromarray(array)
-	buff = BytesIO()
-	pil_img.save(buff, format="PNG")
-	return base64.b64encode(buff.getvalue()).decode("utf-8")
+    pil_img = Image.fromarray(array)
+    buff = BytesIO()
+    pil_img.save(buff, format="PNG")
+    return base64.b64encode(buff.getvalue()).decode("utf-8")
 
 video = skvideo.io.vread(file)
 
@@ -86,7 +86,7 @@ answer_key = {}
 frame = 1
 
 for rgb_frame in video:
-	
+    
     rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
 
     seg = model.predict(rgb.reshape(1,320,320,3))
@@ -94,10 +94,10 @@ for rgb_frame in video:
     seg_road = (seg[:,:,0] > 0.5).astype(np.uint8)
     seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8)
 
-	answer_key[frame] = [encode(seg_vehicle), encode(seg_road)]
+    answer_key[frame] = [encode(seg_vehicle), encode(seg_road)]
     
     # Increment frame
-	frame+=1
+    frame+=1
 
 # Print output in proper json format
 print (json.dumps(answer_key))
