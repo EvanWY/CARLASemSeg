@@ -19,12 +19,22 @@ from utils.SegDataGenerator import *
 import time
 import sklearn
 from sklearn.model_selection import train_test_split
+import sys, skvideo.io
 
-if __name__ == '__main__':
-    model = zerg_model(batch_shape=[1, 320, 320, 3])
-    model.load_weights('zerg_model.h5')
+if file == 'visualize.py':
+    print ("Error loading video")
+    quit
 
-    rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+video = skvideo.io.vread(file)
+out_video = np.zeros_like(video)
+
+model = zerg_model(batch_shape=[1, 320, 320, 3])
+model.load_weights('zerg_model.h5')
+
+id = 0
+for rgb_frame in video:
+    
+    rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
 
     seg = model.predict(rgb.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)
@@ -33,8 +43,11 @@ if __name__ == '__main__':
     
     rgb = rgb // 2
     rgb[:,:,0] += seg_road
-    #rgb[:,:,1] += seg_vehicle
+    rgb[:,:,1] += seg_vehicle
+    
+    rgb_fullsize = cv2.resize(rgb, (800, 600), interpolation = cv2.INTER_CUBIC)
+    # cv2.imwrite('visualize_imgs/seg.png', rgb_fullsize, interpolation = cv2.INTER_NEAREST))
+    out_video[id,:,:,:] = rgb_fullsize
+    id += 1
 
-    cv2.imwrite('visualize_imgs/seg.png',cv2.resize(rgb, (800, 600), interpolation = cv2.INTER_NEAREST))
-
-    exit()
+skvideo.io.vwrite('visualize_imgs/seg.mp4')
