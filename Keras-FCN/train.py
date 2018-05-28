@@ -95,7 +95,7 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[20, 320, 320, 3
 
     model = Model(img_input, x)
     # weights_path = os.path.expanduser(os.path.join('~', '.keras/models/fcn_resnet50_weights_tf_dim_ordering_tf_kernels.h5'))
-    # model.load_weights(weights_path, by_name=True)
+    model.load_weights('zerg_model.h5')
     return model
 
 class FitGenCallback(keras.callbacks.Callback):
