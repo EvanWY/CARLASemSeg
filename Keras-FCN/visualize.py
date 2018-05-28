@@ -68,6 +68,7 @@ if __name__ == '__main__':
     rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
     
     starttime = time.time()
+    print ('start testing, start time: %f'%starttime)
 
     for i in range(100):
         seg = model.predict(rgb.reshape(1,320,320,3))
