@@ -96,8 +96,8 @@ for rgb_frame in video:
     seg_road = (seg[:,:,0] > 0.5).astype(np.uint8)
     seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8)
     
-    seg_road_fullsize = cv2.resize(seg_road, (600, 800), interpolation = cv2.INTER_NEAREST)
-    seg_vehicle_fullsize = cv2.resize(seg_vehicle, (600, 800), interpolation = cv2.INTER_NEAREST)
+    seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
+    seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
 
     answer_key[frame] = [encode(seg_vehicle_fullsize), encode(seg_road_fullsize)]
     
