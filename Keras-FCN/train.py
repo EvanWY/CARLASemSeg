@@ -98,7 +98,7 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3
     return model
 
 class FitGenCallback(keras.callbacks.Callback):
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_begin(self, epoch, logs={}):
         rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
         
         z = np.zeros([50,320,320,3])
