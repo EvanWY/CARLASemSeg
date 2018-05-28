@@ -19,6 +19,7 @@ from utils.SegDataGenerator import *
 import time
 import sklearn
 from sklearn.model_selection import train_test_split
+import keras
 
 def zerg_generator(samples, batch_size=50):
     num_samples = len(samples)
@@ -100,7 +101,7 @@ class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
         rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
         
-        seg = model.predict(rgb.reshape(1,320,320,3))
+        seg = self.model.predict(rgb.reshape(1,320,320,3))
         seg = seg.reshape(320,320,2)
         seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
         seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
