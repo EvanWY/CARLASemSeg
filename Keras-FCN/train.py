@@ -136,7 +136,6 @@ if __name__ == '__main__':
         train_generator,
         steps_per_epoch = 45, 
         epochs = 12,
-        verbose = 2,
         validation_data = validation_generator, 
         validation_steps = 5,
         callbacks = [FitGenCallback()]
