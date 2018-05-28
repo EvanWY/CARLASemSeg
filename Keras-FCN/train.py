@@ -103,6 +103,7 @@ class FitGenCallback(keras.callbacks.Callback):
         
         z = np.zeros([50,320,320,3])
         z[0,:,:,:] = rgb
+        print (z.shape)
         seg = self.model.predict(z)[0,:,:,:]
         seg = seg.reshape(320,320,2)
         seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
