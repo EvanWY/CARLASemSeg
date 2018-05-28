@@ -66,19 +66,6 @@ if __name__ == '__main__':
     model.load_weights('zerg_model.h5')
 
     rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
-    
-    starttime = time.time()
-    print ('start testing, start time: %f'%starttime)
-
-    temp = starttime
-    for i in range(100):
-        seg = model.predict(rgb.reshape(1,320,320,3))
-        print ('elasped: %f'%(time.time() - temp))
-        temp = time.time()
-
-    dur = time.time() - starttime
-    fps = 100.0/dur
-    print ('fps=%f'%fps)
 
     seg = seg.reshape(320,320,2)
     seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
@@ -86,8 +73,8 @@ if __name__ == '__main__':
     
     rgb = rgb // 2
     rgb[:,:,0] += seg_road
-    rgb[:,:,1] += seg_vehicle
+    #rgb[:,:,1] += seg_vehicle
 
-    cv2.imwrite('visualize_imgs/seg.png',rgb)
+    cv2.imwrite('visualize_imgs/seg.png',cv2.resize(rgb, (800, 600), interpolation = cv2.INTER_NEAREST))
 
     exit()
