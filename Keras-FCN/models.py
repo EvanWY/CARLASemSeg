@@ -14,6 +14,7 @@ from keras.applications.imagenet_utils import _obtain_input_shape
 import keras.backend as K
 import tensorflow as tf
 
+import cv2
 from utils.get_weights_path import *
 from utils.basics import *
 from utils.resnet_helpers import *
