@@ -139,7 +139,7 @@ if __name__ == '__main__':
     model.fit_generator(
         train_generator,
         steps_per_epoch = 45, 
-        epochs = 60,
+        epochs = 43,
         validation_data = validation_generator, 
         validation_steps = 5,
         callbacks = [FitGenCallback()]
