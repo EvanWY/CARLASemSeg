@@ -20,39 +20,6 @@ import time
 import sklearn
 from sklearn.model_selection import train_test_split
 
-def zerg_generator(samples, batch_size=50):
-    num_samples = len(samples)
-    while 1: # Loop forever so the generator never terminates
-        sklearn.utils.shuffle(samples)
-        for offset in range(0, num_samples, batch_size // 2):
-            batch_samples = samples[offset:offset + batch_size // 2]
-
-            rgb_imgs = []
-            seg_imgs = []
-            for batch_sample in batch_samples:
-                rgb = cv2.resize(cv2.imread(batch_sample[0]), (320, 320), interpolation = cv2.INTER_CUBIC)
-                
-                raw_seg = cv2.resize(cv2.imread(batch_sample[1]), (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
-                seg_road = np.logical_or(raw_seg == 7 ,raw_seg == 6).astype(np.uint8)
-                seg_vehicle = (raw_seg == 10).astype(np.uint8)
-                seg = np.zeros((320, 320, 2)).astype(np.uint8)
-                seg [:,:,0] = seg_road
-                seg [:,:,1] = seg_vehicle
-
-                #rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
-                rgb_flip = cv2.flip(rgb, 1)
-                seg_flip = cv2.flip(seg, 1)
-
-                rgb_imgs.append(rgb)
-                seg_imgs.append(seg)
-                rgb_imgs.append(rgb_flip)
-                seg_imgs.append(seg_flip)
-
-            # trim image to only see section with road
-            X_train = np.array(rgb_imgs).reshape(-1,320, 320, 3)
-            y_train = np.array(seg_imgs).reshape(-1,320, 320, 2)
-            yield sklearn.utils.shuffle(X_train, y_train)
-
 def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3], classes=2):
     if batch_shape:
         img_input = Input(batch_shape=batch_shape)
@@ -92,33 +59,14 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3
     x = BilinearUpSampling2D(target_size=tuple(image_size))(x)
 
     model = Model(img_input, x)
-    # weights_path = os.path.expanduser(os.path.join('~', '.keras/models/fcn_resnet50_weights_tf_dim_ordering_tf_kernels.h5'))
-    # model.load_weights(weights_path, by_name=True)
     return model
 
 if __name__ == '__main__':
-    samples = []
-    for line in range(1000):
-        samples.append(['../Train/CameraRGB/%d.png' % line, '../Train/CameraSeg/%d.png' % line])
-
-    train_samples, validation_samples = train_test_split(samples, test_size=0.10)
-    # compile and train the model using the generator function
-    train_generator = zerg_generator(train_samples, batch_size=50)
-    validation_generator = zerg_generator(validation_samples, batch_size=50)
-
     model = zerg_model()
+    model.load_weights('zerg_model.h5')
 
-    model.summary()
-    print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
-    model.compile(loss = 'mse', optimizer = 'adam')
-    model.fit_generator(
-        train_generator,
-        steps_per_epoch = 18, 
-        epochs = 2,
-        verbose = 2,
-        validation_data = validation_generator, 
-        validation_steps = 2
-    )
+    rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+    seg = model.predict(rgb)
+    cv2.imwrite('visualize_imgs/seg.png',seg)
 
-    model.save('zerg_model.h5')
     exit()
