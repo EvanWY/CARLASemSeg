@@ -21,6 +21,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 import sys, skvideo.io
 
+file = sys.argv[-1]
 if file == 'visualize.py':
     print ("Error loading video")
     quit
