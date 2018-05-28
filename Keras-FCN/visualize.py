@@ -21,20 +21,21 @@ import sklearn
 from sklearn.model_selection import train_test_split
 import sys, skvideo.io
 
-file = sys.argv[-1]
-if file == 'visualize.py':
-    print ("Error loading video")
-    quit
+# file = sys.argv[-1]
+# if file == 'visualize.py':
+#     print ("Error loading video")
+#     quit
 
-video = skvideo.io.vread(file)
-out_video = np.zeros_like(video)
+# video = skvideo.io.vread(file)
+# out_video = np.zeros_like(video)
 
 model = zerg_model(batch_shape=[1, 320, 320, 3])
 model.load_weights('zerg_model.h5')
 
-id = 0
-for rgb_frame in video:
-    
+out_video = np.zeros([1000, 600, 800, 3])
+
+for id in range(1000):
+    rgb_frame = cv2.imread('../Train/CameraRGB/%d.png' % id)
     rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
 
     seg = model.predict(rgb.reshape(1,320,320,3))
@@ -49,6 +50,5 @@ for rgb_frame in video:
     rgb_fullsize = cv2.resize(rgb, (800, 600), interpolation = cv2.INTER_CUBIC)
     # cv2.imwrite('visualize_imgs/seg.png', rgb_fullsize, interpolation = cv2.INTER_NEAREST))
     out_video[id,:,:,:] = rgb_fullsize
-    id += 1
 
 skvideo.io.vwrite('visualize_imgs/seg.mp4', out_video)
