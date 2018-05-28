@@ -136,7 +136,7 @@ if __name__ == '__main__':
         verbose = 2,
         validation_data = validation_generator, 
         validation_steps = 2,
-        callbacks = [FitGenCallback]
+        callbacks = [FitGenCallback()]
     )
 
     model.save('zerg_model.h5')
