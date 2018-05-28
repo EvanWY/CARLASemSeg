@@ -17,6 +17,7 @@ from utils.loss_function import *
 from utils.metrics import *
 from utils.SegDataGenerator import *
 import time
+import sklearn
 from sklearn.model_selection import train_test_split
 
 def zerg_generator(samples, batch_size=36):
