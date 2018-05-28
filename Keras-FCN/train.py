@@ -101,7 +101,9 @@ class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
         rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
         
-        seg = self.model.predict(rgb.reshape(1,320,320,3))
+        z = np.zeros(50,320,320,3)
+        z[0,:,:,:] = rgb.reshape(1,320,320,3)
+        seg = self.model.predict(z)[0,:,:,:]
         seg = seg.reshape(320,320,2)
         seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
         seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
