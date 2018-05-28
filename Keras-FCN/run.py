@@ -85,6 +85,8 @@ answer_key = {}
 # Frame numbering starts at 1
 frame = 1
 
+model = zerg_model()
+
 for rgb_frame in video:
     
     rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
