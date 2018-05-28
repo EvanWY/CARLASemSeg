@@ -20,7 +20,7 @@ import time
 import sklearn
 from sklearn.model_selection import train_test_split
 
-def zerg_generator(samples, batch_size=25):
+def zerg_generator(samples, batch_size=50):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         sklearn.utils.shuffle(samples)
@@ -53,7 +53,7 @@ def zerg_generator(samples, batch_size=25):
             y_train = np.array(seg_imgs).reshape(-1,320, 320, 2)
             yield sklearn.utils.shuffle(X_train, y_train)
 
-def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[25, 320, 320, 3], classes=2):
+def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3], classes=2):
     if batch_shape:
         img_input = Input(batch_shape=batch_shape)
         image_size = batch_shape[1:3]
@@ -103,8 +103,8 @@ if __name__ == '__main__':
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
-    train_generator = zerg_generator(train_samples, batch_size=25)
-    validation_generator = zerg_generator(validation_samples, batch_size=25)
+    train_generator = zerg_generator(train_samples, batch_size=50)
+    validation_generator = zerg_generator(validation_samples, batch_size=50)
 
     model = zerg_model()
 
@@ -113,11 +113,11 @@ if __name__ == '__main__':
     model.compile(loss = 'mse', optimizer = 'adam')
     model.fit_generator(
         train_generator,
-        steps_per_epoch = 36, 
+        steps_per_epoch = 18, 
         epochs = 2,
         verbose = 2,
         validation_data = validation_generator, 
-        validation_steps = 4
+        validation_steps = 2
     )
 
     model.save('zerg_model.h5')
