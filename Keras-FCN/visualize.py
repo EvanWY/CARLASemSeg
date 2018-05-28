@@ -29,12 +29,14 @@ import sys, skvideo.io
 # video = skvideo.io.vread(file)
 # out_video = np.zeros_like(video)
 
+frames = 1000
+
 model = zerg_model(batch_shape=[1, 320, 320, 3])
 model.load_weights('zerg_model.h5')
 
-out_video = np.zeros([1000, 600, 800, 3])
+out_video = np.zeros([frames, 600, 800, 3])
 
-for id in range(1000):
+for id in range(frames):
     rgb_frame = cv2.imread('../Train/CameraRGB/%d.png' % id)
     rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
 
