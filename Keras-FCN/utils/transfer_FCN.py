@@ -74,7 +74,7 @@ def transfer_FCN_Vgg16():
             elif layer.name=='predictions':
                 layer.name='predictions_1000'
                 weights[0] = np.reshape(weights[0], (1,1,4096,1000))
-            if index.has_key(layer.name):
+            if layer.name in index:
                 index[layer.name].set_weights(weights)
         model.save_weights(weights_path)
         print( 'Successfully transformed!')
@@ -131,7 +131,7 @@ def transfer_FCN_ResNet50():
             weights = layer.get_weights()
             if layer.name=='fc1000':
                 weights[0] = np.reshape(weights[0], (1,1,2048,1000))
-            if index.has_key(layer.name):
+            if layer.name in index:
                 index[layer.name].set_weights(weights)
         model.save_weights(weights_path)
         print( 'Successfully transformed!')

@@ -44,7 +44,7 @@ def train(batch_size, epochs, lr_base, lr_power, weight_decay, classes,
 
     # ###############learning rate scheduler####################
     def lr_scheduler(epoch, mode='power_decay'):
-        '''if lr_dict.has_key(epoch):
+        '''if epoch in lr_dict:
             lr = lr_dict[epoch]
             print 'lr: %f' % lr'''
 
@@ -237,5 +237,5 @@ if __name__ == '__main__':
     K.set_session(session)
     train(batch_size, epochs, lr_base, lr_power, weight_decay, classes, model_name, train_file_path, val_file_path,
           data_dir, label_dir, target_size=target_size, batchnorm_momentum=batchnorm_momentum, resume_training=resume_training,
-          class_weight=class_weight, loss_fn=loss_fn, metrics=metrics, loss_shape=loss_shape, data_suffix=data_suffix,
-          label_suffix=label_suffix, ignore_label=ignore_label, label_cval=label_cval)
+          class_weight=class_weight, loss_fn=None, metrics=[], loss_shape=None, data_suffix=data_suffix,
+          label_suffix=label_suffix, ignore_label=None, label_cval=None)
