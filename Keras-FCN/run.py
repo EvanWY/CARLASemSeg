@@ -86,6 +86,7 @@ answer_key = {}
 frame = 1
 
 model = zerg_model()
+model.load_weights('zerg_model.h5')
 
 for rgb_frame in video:
     
