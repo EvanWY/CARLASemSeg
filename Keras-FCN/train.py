@@ -180,7 +180,17 @@ if __name__ == '__main__':
     else:
         weight_decay = 1e-4
     target_size = (320, 320)
-    dataset = 'VOC2012_BERKELEY'
+    
+    dataset = 'LYFT'
+    if dataset == 'LYFT':
+        # pascal voc + berkeley semantic contours annotations
+        train_file_path = os.path.expanduser('../combined_imageset_train.txt')
+        val_file_path   = os.path.expanduser('../combined_imageset_val.txt')
+        data_dir        = os.path.expanduser('../Train/CameraRGB')
+        label_dir       = os.path.expanduser('../Train/CameraSeg')
+        data_suffix='.png'
+        label_suffix='.png'
+        classes = 3
     if dataset == 'VOC2012_BERKELEY':
         # pascal voc + berkeley semantic contours annotations
         train_file_path = os.path.expanduser('~/.keras/datasets/VOC2012/combined_imageset_train.txt') #Data/VOClarge/VOC2012/ImageSets/Segmentation
