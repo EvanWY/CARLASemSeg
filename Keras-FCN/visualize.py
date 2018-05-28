@@ -20,7 +20,7 @@ import time
 import sklearn
 from sklearn.model_selection import train_test_split
 
-def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3], classes=2):
+def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[1, 320, 320, 3], classes=2):
     if batch_shape:
         img_input = Input(batch_shape=batch_shape)
         image_size = batch_shape[1:3]
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     model = zerg_model()
     model.load_weights('zerg_model.h5')
 
-    rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+    rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC).resize(1,320,320,3)
     seg = model.predict(rgb)
     cv2.imwrite('visualize_imgs/seg.png',seg)
 
