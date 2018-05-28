@@ -21,7 +21,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 
 if __name__ == '__main__':
-    model = models.zerg_model(batch_shape=[1, 320, 320, 3])
+    model = zerg_model(batch_shape=[1, 320, 320, 3])
     model.load_weights('zerg_model.h5')
 
     rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)

@@ -44,7 +44,7 @@ answer_key = {}
 # Frame numbering starts at 1
 frame = 1
 
-model = models.zerg_model(batch_shape=[1, 320, 320, 3])
+model = zerg_model(batch_shape=[1, 320, 320, 3])
 model.load_weights('zerg_model.h5')
 
 for rgb_frame in video:
