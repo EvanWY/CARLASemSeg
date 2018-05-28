@@ -101,7 +101,7 @@ if __name__ == '__main__':
     for line in range(1000):
         samples.append(['../Train/CameraRGB/%d.png' % line, '../Train/CameraSeg/%d.png' % line])
 
-    train_samples, validation_samples = train_test_split(samples, test_size=0.15)
+    train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
     train_generator = zerg_generator(train_samples, batch_size=36)
     validation_generator = zerg_generator(validation_samples, batch_size=36)
@@ -113,10 +113,11 @@ if __name__ == '__main__':
     model.compile(loss = 'mse', optimizer = 'adam')
     model.fit_generator(
         train_generator,
-        steps_per_epoch = 27, 
+        steps_per_epoch = 24, 
         epochs = 12,
         verbose = 2,
         validation_data = validation_generator, 
+        validation_steps = 3, 
         workers = 4
     )
 
