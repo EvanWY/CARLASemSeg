@@ -117,8 +117,7 @@ if __name__ == '__main__':
         epochs = 12,
         verbose = 2,
         validation_data = validation_generator, 
-        validation_steps = 3, 
-        workers = 4
+        validation_steps = 3
     )
 
     model.save('zerg_model.h5')
