@@ -59,7 +59,7 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[1, 320, 320, 3]
     x = BilinearUpSampling2D(target_size=tuple(image_size))(x)
 
     model = Model(img_input, x)
-    return modelv
+    return model
 
 if __name__ == '__main__':
     model = zerg_model()
