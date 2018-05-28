@@ -50,4 +50,4 @@ for rgb_frame in video:
     out_video[id,:,:,:] = rgb_fullsize
     id += 1
 
-skvideo.io.vwrite('visualize_imgs/seg.mp4')
+skvideo.io.vwrite('visualize_imgs/seg.mp4', out_video)
