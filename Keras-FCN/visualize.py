@@ -59,14 +59,23 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[1, 320, 320, 3]
     x = BilinearUpSampling2D(target_size=tuple(image_size))(x)
 
     model = Model(img_input, x)
-    return model
+    return modelv
 
 if __name__ == '__main__':
     model = zerg_model()
     model.load_weights('zerg_model.h5')
 
-    rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC).resize(1,320,320,3)
-    seg = model.predict(rgb)
+    rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+    
+    seg = model.predict(rgb.reshape(1,320,320,3))
+    seg = seg.reshape(320,320,2)
+    seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
+    seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
+    
+    rgb = rgb // 2
+    rgb[:,:,0] += seg_road
+    rgb[:,:,1] += seg_vehicle
+
     cv2.imwrite('visualize_imgs/seg.png',seg)
 
     exit()

@@ -111,13 +111,18 @@ if __name__ == '__main__':
     model.summary()
     print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
     model.compile(loss = 'mse', optimizer = 'adam')
+
+    def fit_gen_callbacks():
+        print ('callback!')
+
     model.fit_generator(
         train_generator,
         steps_per_epoch = 18, 
         epochs = 2,
         verbose = 2,
         validation_data = validation_generator, 
-        validation_steps = 2
+        validation_steps = 2,
+        callbacks = fit_gen_callbacks
     )
 
     model.save('zerg_model.h5')
