@@ -96,6 +96,22 @@ def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3
     # model.load_weights(weights_path, by_name=True)
     return model
 
+class FitGenCallback(keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs={}):
+        rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+        
+        seg = model.predict(rgb.reshape(1,320,320,3))
+        seg = seg.reshape(320,320,2)
+        seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
+        seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
+        
+        rgb = rgb // 2
+        rgb[:,:,0] += seg_road
+        rgb[:,:,1] += seg_vehicle
+
+        cv2.imwrite('visualize_imgs/seg_epoch%i.png' % epoch, rgb)
+        return
+
 if __name__ == '__main__':
     samples = []
     for line in range(1000):
@@ -112,17 +128,14 @@ if __name__ == '__main__':
     print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
     model.compile(loss = 'mse', optimizer = 'adam')
 
-    def fit_gen_callbacks():
-        print ('callback!')
-
     model.fit_generator(
         train_generator,
         steps_per_epoch = 18, 
-        epochs = 2,
+        epochs = 12,
         verbose = 2,
         validation_data = validation_generator, 
         validation_steps = 2,
-        callbacks = [fit_gen_callbacks]
+        callbacks = [FitGenCallback]
     )
 
     model.save('zerg_model.h5')
