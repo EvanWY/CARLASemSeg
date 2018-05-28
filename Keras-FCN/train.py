@@ -103,8 +103,8 @@ if __name__ == '__main__':
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.15)
     # compile and train the model using the generator function
-    train_generator = generator(train_samples, batch_size=36)
-    validation_generator = generator(validation_samples, batch_size=36)
+    train_generator = zerg_generator(train_samples, batch_size=36)
+    validation_generator = zerg_generator(validation_samples, batch_size=36)
 
     model = zerg_model()
 
