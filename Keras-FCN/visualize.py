@@ -76,6 +76,6 @@ if __name__ == '__main__':
     rgb[:,:,0] += seg_road
     rgb[:,:,1] += seg_vehicle
 
-    cv2.imwrite('visualize_imgs/seg.png',seg)
+    cv2.imwrite('visualize_imgs/seg.png',rgb)
 
     exit()
