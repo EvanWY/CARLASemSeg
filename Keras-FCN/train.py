@@ -113,7 +113,7 @@ class FitGenCallback(keras.callbacks.Callback):
         rgb[:,:,0] += seg_road
         rgb[:,:,1] += seg_vehicle
 
-        cv2.imwrite('visualize_imgs/seg-epoch_%3d.png' % epoch, rgb)
+        cv2.imwrite('visualize_imgs/seg-epoch_%03d.png' % epoch, rgb)
 
         if (epoch % 20 == 1):
             self.model.save('zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch))
