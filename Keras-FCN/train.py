@@ -66,49 +66,6 @@ def zerg_generator(samples, batch_size=20):
             y_train = np.array(seg_imgs).reshape(-1,320, 320, 2)
             yield sklearn.utils.shuffle(X_train, y_train)
 
-def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[20, 320, 320, 3], classes=2):
-    if batch_shape:
-        img_input = Input(batch_shape=batch_shape)
-        image_size = batch_shape[1:3]
-    else:
-        print ('zerg_model should have batch_shape')
-        exit()
-
-    bn_axis = 3
-
-    x = Conv2D(64, (7, 7), strides=(2, 2), padding='same', name='conv1', kernel_regularizer=l2(weight_decay))(img_input)
-    x = BatchNormalization(axis=bn_axis, name='bn_conv1', momentum=batch_momentum)(x)
-    x = Activation('relu')(x)
-    x = MaxPooling2D((3, 3), strides=(2, 2))(x)
-
-    x = conv_block(3, [64, 64, 256], stage=2, block='a', weight_decay=weight_decay, strides=(1, 1), batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [64, 64, 256], stage=2, block='b', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [64, 64, 256], stage=2, block='c', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-
-    x = conv_block(3, [128, 128, 512], stage=3, block='a', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [128, 128, 512], stage=3, block='b', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [128, 128, 512], stage=3, block='c', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [128, 128, 512], stage=3, block='d', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-
-    x = conv_block(3, [256, 256, 1024], stage=4, block='a', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [256, 256, 1024], stage=4, block='b', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [256, 256, 1024], stage=4, block='c', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [256, 256, 1024], stage=4, block='d', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [256, 256, 1024], stage=4, block='e', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-    x = identity_block(3, [256, 256, 1024], stage=4, block='f', weight_decay=weight_decay, batch_momentum=batch_momentum)(x)
-
-    x = atrous_conv_block(3, [512, 512, 2048], stage=5, block='a', weight_decay=weight_decay, atrous_rate=(2, 2), batch_momentum=batch_momentum)(x)
-    x = atrous_identity_block(3, [512, 512, 2048], stage=5, block='b', weight_decay=weight_decay, atrous_rate=(2, 2), batch_momentum=batch_momentum)(x)
-    x = atrous_identity_block(3, [512, 512, 2048], stage=5, block='c', weight_decay=weight_decay, atrous_rate=(2, 2), batch_momentum=batch_momentum)(x)
-    
-    x = Conv2D(classes, (1, 1), kernel_initializer='he_normal', activation='linear', padding='same', strides=(1, 1), kernel_regularizer=l2(weight_decay))(x)
-    x = BilinearUpSampling2D(target_size=tuple(image_size))(x)
-
-    model = Model(img_input, x)
-    # weights_path = os.path.expanduser(os.path.join('~', '.keras/models/fcn_resnet50_weights_tf_dim_ordering_tf_kernels.h5'))
-    model.load_weights('zerg_model.h5')
-    return model
-
 class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch, logs={}):
         rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
@@ -141,7 +98,8 @@ if __name__ == '__main__':
     train_generator = zerg_generator(train_samples, batch_size=20)
     validation_generator = zerg_generator(validation_samples, batch_size=20)
 
-    model = zerg_model()
+    model = models.zerg_model(batch_shape=[20, 320, 320, 3])
+    model.load_weights('zerg_model.h5')
 
     model.summary()
     print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
