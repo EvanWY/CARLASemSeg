@@ -73,8 +73,8 @@ if __name__ == '__main__':
     temp = starttime
     for i in range(100):
         seg = model.predict(rgb.reshape(1,320,320,3))
-        print ('elasped: %f'%time.time() - temp)
-        temp - time.time()
+        print ('elasped: %f'%(time.time() - temp))
+        temp = time.time()
 
     dur = time.time() - starttime
     fps = 100.0/dur
