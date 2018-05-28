@@ -21,7 +21,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 import keras
 
-def zerg_generator(samples, batch_size=50):
+def zerg_generator(samples, batch_size=20):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         sklearn.utils.shuffle(samples)
@@ -54,7 +54,7 @@ def zerg_generator(samples, batch_size=50):
             y_train = np.array(seg_imgs).reshape(-1,320, 320, 2)
             yield sklearn.utils.shuffle(X_train, y_train)
 
-def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[50, 320, 320, 3], classes=2):
+def zerg_model(weight_decay=0., batch_momentum=0.9, batch_shape=[20, 320, 320, 3], classes=2):
     if batch_shape:
         img_input = Input(batch_shape=batch_shape)
         image_size = batch_shape[1:3]
@@ -101,7 +101,7 @@ class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch, logs={}):
         rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
         
-        z = np.zeros([50,320,320,3])
+        z = np.zeros([20,320,320,3])
         z[0,:,:,:] = rgb
         print (z.shape)
         seg = self.model.predict(z)[0,:,:,:]
@@ -123,8 +123,8 @@ if __name__ == '__main__':
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
-    train_generator = zerg_generator(train_samples, batch_size=50)
-    validation_generator = zerg_generator(validation_samples, batch_size=50)
+    train_generator = zerg_generator(train_samples, batch_size=20)
+    validation_generator = zerg_generator(validation_samples, batch_size=20)
 
     model = zerg_model()
 
@@ -134,11 +134,11 @@ if __name__ == '__main__':
 
     model.fit_generator(
         train_generator,
-        steps_per_epoch = 18, 
+        steps_per_epoch = 45, 
         epochs = 12,
         verbose = 2,
         validation_data = validation_generator, 
-        validation_steps = 2,
+        validation_steps = 5,
         callbacks = [FitGenCallback()]
     )
 
