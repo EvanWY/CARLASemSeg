@@ -59,13 +59,12 @@ def zerg_generator(samples, batch_size=20):
                 seg [:,:,0] = seg_road
                 seg [:,:,1] = seg_vehicle
 
-                #rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
                 img_flip = cv2.flip(img, 1)
                 seg_flip = cv2.flip(seg, 1)
 
-                img_list.append(rgb)
+                img_list.append(img)
                 seg_list.append(seg)
-                img_list.append(rgb_flip)
+                img_list.append(img_flip)
                 seg_list.append(seg_flip)
 
             # trim image to only see section with road
@@ -125,7 +124,7 @@ if __name__ == '__main__':
     model.fit_generator(
         train_generator,
         steps_per_epoch = 45, 
-        epochs = 172,
+        epochs = 1720,
         validation_data = validation_generator, 
         validation_steps = 5,
         callbacks = [FitGenCallback()]
