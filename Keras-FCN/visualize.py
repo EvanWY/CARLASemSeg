@@ -32,18 +32,20 @@ import sys, skvideo.io
 frames = 1000
 
 model = zerg_model(batch_shape=[1, 320, 320, 3])
-model.load_weights('zerg_model.h5')
+model.load_weights('zerg_model.h5') 
 
 out_video = np.zeros([frames, 600, 800, 3])
 
 for id in range(frames):
+    if (id % 10 == 0):
+        print ('processing .. {0}/{1}'.format(id, frames))
     rgb_frame = cv2.imread('../Train/CameraRGB/%d.png' % id)
     rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
 
     seg = model.predict(rgb.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)
-    seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
-    seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
+    seg_road = (seg[:,:,0] > 0.8).astype(np.uint8) * 127
+    seg_vehicle = (seg[:,:,1] > 0.2).astype(np.uint8) * 127
     
     rgb = rgb // 2
     rgb[:,:,0] += seg_road
