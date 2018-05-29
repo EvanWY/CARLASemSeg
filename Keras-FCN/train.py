@@ -100,7 +100,15 @@ if __name__ == '__main__':
     validation_generator = zerg_generator(validation_samples, batch_size=20)
 
     model = zerg_model(batch_shape=[20, 320, 320, 3])
-    model.load_weights('zerg_model.h5')
+
+    train_mode = sys.argv[-1]
+    if train_mode == 'resume':
+        model.load_weights('zerg_model.h5')
+    elif train_mode == 'new':
+        pass
+    else:
+        print ('specify training mode, `python train.py resume` or `python train.py new`')
+        exit()
 
     model.summary()
     print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
