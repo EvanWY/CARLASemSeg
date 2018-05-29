@@ -30,62 +30,67 @@ def zerg_generator(samples, batch_size=20):
         for offset in range(0, num_samples, batch_size // 2):
             batch_samples = samples[offset:offset + batch_size // 2]
 
-            rgb_imgs = []
-            seg_imgs = []
+            img_list = []
+            seg_list = []
             for batch_sample in batch_samples:
-                rgb_fullsize = cv2.imread(batch_sample[0])
-                raw_seg_fullsize = cv2.imread(batch_sample[1])
-                
-                temp_ = raw_seg_fullsize[496:600,:,:]
+                img = cv2.imread(batch_sample[0])
+
+                seg = cv2.imread(batch_sample[1])
+                temp_ = seg[496:600,:,:]
                 temp_ = (temp_ != 10) * temp_
-                raw_seg_fullsize[496:600,:,:] = temp_
+                seg[496:600,:,:] = temp_
 
                 t = 600 - random.randint(0,12)
                 b = 0 + random.randint(0,12)
                 r = 800 - random.randint(0,16)
                 l = 0 + random.randint(0,16)
-                rgb_crop = rgb_fullsize[b:t, l:r]
-                raw_seg_crop = raw_seg_fullsize[b:t, l:r]
+                
+                img = img[b:t, l:r]
+                seg = seg[b:t, l:r]
                 
 
-                rgb = cv2.resize(rgb_crop, (320, 320), interpolation = cv2.INTER_CUBIC)
-                raw_seg = cv2.resize(raw_seg_crop, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
-                seg_road = np.logical_or(raw_seg == 7 ,raw_seg == 6).astype(np.uint8)
-                seg_vehicle = (raw_seg == 10).astype(np.uint8)
+                img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                
+                seg = cv2.resize(seg, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
+                seg_road = np.logical_or(seg == 7 ,seg == 6).astype(np.uint8)
+                seg_vehicle = (seg == 10).astype(np.uint8)
                 seg = np.zeros((320, 320, 2)).astype(np.uint8)
                 seg [:,:,0] = seg_road
                 seg [:,:,1] = seg_vehicle
 
                 #rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
-                rgb_flip = cv2.flip(rgb, 1)
+                img_flip = cv2.flip(img, 1)
                 seg_flip = cv2.flip(seg, 1)
 
-                rgb_imgs.append(rgb)
-                seg_imgs.append(seg)
-                rgb_imgs.append(rgb_flip)
-                seg_imgs.append(seg_flip)
+                img_list.append(rgb)
+                seg_list.append(seg)
+                img_list.append(rgb_flip)
+                seg_list.append(seg_flip)
 
             # trim image to only see section with road
-            X_train = np.array(rgb_imgs).reshape(-1,320, 320, 3)
-            y_train = np.array(seg_imgs).reshape(-1,320, 320, 2)
+            X_train = np.array(img_list).reshape(-1,320, 320, 3)
+            y_train = np.array(seg_list).reshape(-1,320, 320, 2)
             yield sklearn.utils.shuffle(X_train, y_train)
 
 class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch, logs={}):
-        rgb = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+        img = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
+        visualization_img = img
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         
         z = np.zeros([20,320,320,3])
-        z[0,:,:,:] = rgb
+        z[0,:,:,:] = img
         seg = self.model.predict(z)[0,:,:,:]
         seg = seg.reshape(320,320,2)
         seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
         seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
         
-        rgb = rgb // 2
-        rgb[:,:,0] += seg_road
-        rgb[:,:,1] += seg_vehicle
+        visualization_img = visualization_img // 2
+        visualization_img[:,:,0] += seg_road
+        visualization_img[:,:,1] += seg_vehicle
 
-        cv2.imwrite('visualize_imgs/seg-epoch_%03d.png' % epoch, rgb)
+        cv2.imwrite('visualize_imgs/seg-epoch_%03d.png' % epoch, visualization_img)
 
         if (epoch % 20 == 1):
             self.model.save('zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch))
@@ -115,7 +120,7 @@ if __name__ == '__main__':
 
     model.summary()
     print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
-    model.compile(loss = 'mse', optimizer = 'adam')
+    model.compile(loss = 'categorical_crossentropy', optimizer = 'adam')
 
     model.fit_generator(
         train_generator,

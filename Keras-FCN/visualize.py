@@ -39,20 +39,22 @@ out_video = np.zeros([frames, 600, 800, 3])
 for id in range(frames):
     if (id % 10 == 0):
         print ('processing .. {0}/{1}'.format(id, frames))
-    rgb_frame = cv2.imread('../Train/CameraRGB/%d.png' % id)
-    rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
+    img = cv2.imread('../Train/CameraRGB/%d.png' % id)
+    img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
+    visualization_img = img
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    seg = model.predict(rgb.reshape(1,320,320,3))
+    seg = model.predict(img.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)
-    seg_road = (seg[:,:,0] > 0.8).astype(np.uint8) * 127
-    seg_vehicle = (seg[:,:,1] > 0.2).astype(np.uint8) * 127
+    seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
+    seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
     
-    rgb = rgb // 2
-    rgb[:,:,0] += seg_road
-    rgb[:,:,1] += seg_vehicle
+    visualization_img = visualization_img // 2
+    visualization_img[:,:,0] += seg_road
+    visualization_img[:,:,1] += seg_vehicle
     
-    rgb_fullsize = cv2.resize(rgb, (800, 600), interpolation = cv2.INTER_CUBIC)
+    visualization_img = cv2.resize(visualization_img, (800, 600), interpolation = cv2.INTER_CUBIC)
     # cv2.imwrite('visualize_imgs/seg.png', rgb_fullsize, interpolation = cv2.INTER_NEAREST))
-    out_video[id,:,:,:] = rgb_fullsize
+    out_video[id,:,:,:] = visualization_img
 
 skvideo.io.vwrite('visualize_imgs/seg.mp4', out_video)

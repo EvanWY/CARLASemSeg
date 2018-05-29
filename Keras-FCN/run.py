@@ -49,12 +49,13 @@ model.load_weights('zerg_model.h5')
 
 for rgb_frame in video:
     
-    rgb = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
+    img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    seg = model.predict(rgb.reshape(1,320,320,3))
+    seg = model.predict(img.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)
-    seg_road = (seg[:,:,0] > 0.8).astype(np.uint8)
-    seg_vehicle = (seg[:,:,1] > 0.2).astype(np.uint8)
+    seg_road = (seg[:,:,0] > 0.5).astype(np.uint8)
+    seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8)
     
     seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
     seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
