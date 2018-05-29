@@ -1,2 +1,5 @@
 # car threshold: 0.2, road threshold: 0.8
 Car F score: 0.165 | Car Precision: 0.041 | Car Recall: 0.661 | Road F score: 0.955 | Road Precision: 0.997 | Road Recall: 0.815 | Averaged F score: 0.560
+
+# filtered out eagle car, car threshold: 0.2, road threshold: 0.8, 20 epochs
+Car F score: 0.292 | Car Precision: 0.100 | Car Recall: 0.562 | Road F score: 0.823 | Road Precision: 0.999 | Road Recall: 0.482 | Averaged F score: 0.557
