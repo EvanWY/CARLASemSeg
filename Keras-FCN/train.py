@@ -119,7 +119,8 @@ if __name__ == '__main__':
 
     model.summary()
     print('### train sample size == {}, validation sample size == {}'.format(len(train_samples), len(validation_samples)))
-    model.compile(loss = 'categorical_crossentropy', optimizer = 'adam')
+    #model.compile(loss = 'categorical_crossentropy', optimizer = 'adam')
+    model.compile(loss = 'mse', optimizer = 'adam')
 
     model.fit_generator(
         train_generator,
