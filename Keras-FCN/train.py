@@ -35,7 +35,10 @@ def zerg_generator(samples, batch_size=20):
             for batch_sample in batch_samples:
                 rgb_fullsize = cv2.imread(batch_sample[0])
                 raw_seg_fullsize = cv2.imread(batch_sample[1])
-                raw_seg_fullsize[496:600,:,:] = 0
+                
+                temp_ = raw_seg_fullsize[496:600,:,:]
+                temp_ = (temp_ != 10) * temp_
+                raw_seg_fullsize[496:600,:,:] = temp_
 
                 t = 600 - random.randint(0,12)
                 b = 0 + random.randint(0,12)
