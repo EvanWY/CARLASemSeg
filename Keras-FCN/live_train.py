@@ -117,8 +117,8 @@ def zerg_generator(samples, batch_size=20):
 
             img, seg = next(sim_frame_generator_instance)
             
-            if batch_id == 0:
-                cv2.imwrite('test_sem.png', seg)
+            # if batch_id == 0:
+            #     cv2.imwrite('test_sem.png', seg)
 
             temp_ = seg[496:600,:,:]
             temp_ = (temp_ != 10) * temp_
