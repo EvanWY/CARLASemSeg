@@ -83,6 +83,7 @@ def sim_frame_generator():
                             decoder_name='raw')
                         color = image.split()
                         image = PImage.merge("RGB", color[2::-1])
+                        image = np.array(image)
                         print ('image.shape')
                         print (image.shape)
                         
