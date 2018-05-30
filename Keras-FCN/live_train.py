@@ -51,19 +51,19 @@ def sim_frame_generator():
                         NumberOfVehicles=20,
                         NumberOfPedestrians=40,
                         WeatherId=random.choice([1, 2, 8, 1, 2, 8, 1, 2, 3, 6, 7, 8]),
-                        QualityLevel='Epic')
+                        QualityLevel='Low')
                     settings.randomize_seeds()
                     #settings.randomize_weather()
 
                     camera0 = Camera('CameraRGB')
                     camera0.set_image_size(800, 600)
-                    camera0.set_position(-10.30, 0, 1.30)
+                    camera0.set_position(1, 0, 1.50)
                     #camera0.FOV = 60
                     settings.add_sensor(camera0)
 
                     camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
                     camera1.set_image_size(800, 600)
-                    #camera1.set_position(0.30, 0, 1.30)
+                    camera0.set_position(1, 0, 1.50)
                     #camera1.FOV = 60
                     settings.add_sensor(camera1)
 
