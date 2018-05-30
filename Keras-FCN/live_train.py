@@ -49,10 +49,10 @@ def sim_frame_generator():
                     SendNonPlayerAgentsInfo=True,
                     NumberOfVehicles=20,
                     NumberOfPedestrians=40,
-                    WeatherId=random.choice([1, 3, 7, 8, 14]),
+                    WeatherId=random.choice([1, 2, 3, 6, 7, 8]),
                     QualityLevel='Epic')
                 settings.randomize_seeds()
-                settings.randomize_weather()
+                #settings.randomize_weather()
 
                 camera0 = Camera('CameraRGB')
                 camera0.set_image_size(800, 600)
