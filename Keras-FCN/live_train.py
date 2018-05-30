@@ -51,19 +51,19 @@ def sim_frame_generator():
                         NumberOfVehicles=20,
                         NumberOfPedestrians=40,
                         WeatherId=random.choice([1, 2, 8, 1, 2, 8, 1, 2, 3, 6, 7, 8]),
-                        QualityLevel='Low')
+                        QualityLevel='Epic')
                     settings.randomize_seeds()
                     #settings.randomize_weather()
 
                     camera0 = Camera('CameraRGB')
                     camera0.set_image_size(800, 600)
-                    camera0.set_position(1, 0, 1.50)
+                    camera0.set_position(1.2, 0, 1)
                     #camera0.FOV = 60
                     settings.add_sensor(camera0)
 
                     camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
                     camera1.set_image_size(800, 600)
-                    camera0.set_position(1, 0, 1.50)
+                    camera0.set_position(1.2, 0, 1)
                     #camera1.FOV = 60
                     settings.add_sensor(camera1)
 
@@ -119,8 +119,6 @@ def zerg_generator(samples, batch_size=20):
             
             if batch_id == 0:
                 cv2.imwrite('test_color.png', img)
-                correct_img = cv2.imread('visualize_imgs/rgb.png')
-                cv2.imwrite('correct_color.png', correct_img)
 
             temp_ = seg[496:600,:,:]
             temp_ = (temp_ != 10) * temp_
@@ -221,7 +219,8 @@ class FitGenCallback(keras.callbacks.Callback):
         cv2.imwrite('visualize_imgs/seg-epoch_%03d.png' % epoch, visualization_img)
 
         if (epoch % 20 == 1):
-            self.model.save('zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch))
+            #self.model.save('zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch))
+            self.model.save('zerg_model_latest.h5')
 
         return
 
