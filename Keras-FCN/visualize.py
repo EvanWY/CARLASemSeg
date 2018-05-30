@@ -49,7 +49,7 @@ for id in range(frames):
 
     if 'road_heat' == sys.argv[-1]:
         pass
-    elif 'vehicle_heat' == sys.argv[-1]):
+    elif 'vehicle_heat' == sys.argv[-1]:
         heat = seg[:,:,1].clip(0,1)
         R = heat.clip(0,0.3333) * 3
         G = (heat.clip(0.3334, 0.6666) - 0.3333) * 3
