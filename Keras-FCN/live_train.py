@@ -74,7 +74,7 @@ def sim_frame_generator():
 
                     client.start_episode(player_start)
 
-                    for xx in range(300):
+                    for xx in range(1000):
                         measurements, sensor_data = client.read_data()
                         for name, measurement in sensor_data.items():
                             image = PImage.frombytes(
@@ -106,51 +106,52 @@ def sim_frame_generator():
     
 
 sim_frame_generator_instance = sim_frame_generator()
-def zerg_generator(samples, batch_size=20):
+def zerg_generator(samples, batch_size=50):
     while 1:
         img_list = []
         seg_list = []
-        for batch_id in range(batch_size):
+        for batch_id in range(batch_size / 10):
 
             #img = cv2.imread(batch_sample[0])
             #seg = cv2.imread(batch_sample[1])
 
-            img, seg = next(sim_frame_generator_instance)
+            img_ori, seg_ori = next(sim_frame_generator_instance)
             
             # if batch_id == 0:
             #     cv2.imwrite('test_sem.png', seg)
 
-            temp_ = seg[496:600,:,:]
+            temp_ = seg_ori[496:600,:,:]
             temp_ = (temp_ != 10) * temp_
-            seg[496:600,:,:] = temp_
+            seg_ori[496:600,:,:] = temp_
 
-            t = 600 - random.randint(0,12)
-            b = 0 + random.randint(0,12)
-            r = 800 - random.randint(0,16)
-            l = 0 + random.randint(0,16)
-            
-            img = img[b:t, l:r]
-            seg = seg[b:t, l:r]
+            for ii in range(10):
+                t = 600 - random.randint(0,12)
+                b = 0 + random.randint(0,12)
+                r = 800 - random.randint(0,16)
+                l = 0 + random.randint(0,16)
+                
+                img = img_ori[b:t, l:r]
+                seg = seg_ori[b:t, l:r]
 
-            img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            
-            seg = cv2.resize(seg, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
-            seg_road = np.logical_or(seg == 7 ,seg == 6).astype(np.uint8)
-            seg_vehicle = (seg == 10).astype(np.uint8)
-            seg = np.zeros((320, 320, 2)).astype(np.uint8)
-            seg [:,:,0] = seg_road
-            seg [:,:,1] = seg_vehicle
+                img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                
+                seg = cv2.resize(seg, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
+                seg_road = np.logical_or(seg == 7 ,seg == 6).astype(np.uint8)
+                seg_vehicle = (seg == 10).astype(np.uint8)
+                seg = np.zeros((320, 320, 2)).astype(np.uint8)
+                seg [:,:,0] = seg_road
+                seg [:,:,1] = seg_vehicle
 
-            img_list.append(img)
-            seg_list.append(seg)
+                img_list.append(img)
+                seg_list.append(seg)
 
         # trim image to only see section with road
         X_train = np.array(img_list).reshape(batch_size, 320, 320, 3)
         y_train = np.array(seg_list).reshape(batch_size, 320, 320, 2)
         yield sklearn.utils.shuffle(X_train, y_train)
 
-def zerg_validation_generator(samples, batch_size=20):
+def zerg_validation_generator(samples, batch_size=50):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         sklearn.utils.shuffle(samples)
@@ -205,7 +206,7 @@ class FitGenCallback(keras.callbacks.Callback):
         visualization_img = img
         img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         
-        z = np.zeros([20,320,320,3])
+        z = np.zeros([50,320,320,3])
         z[0,:,:,:] = img
         seg = self.model.predict(z)[0,:,:,:]
         seg = seg.reshape(320,320,2)
@@ -231,10 +232,10 @@ if __name__ == '__main__':
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
-    train_generator = zerg_generator([], batch_size=20)
-    validation_generator = zerg_validation_generator(samples, batch_size=20)
+    train_generator = zerg_generator([], batch_size=50)
+    validation_generator = zerg_validation_generator(samples, batch_size=50)
 
-    model = zerg_model(batch_shape=[20, 320, 320, 3])
+    model = zerg_model(batch_shape=[50, 320, 320, 3])
 
     train_mode = sys.argv[-1]
     if train_mode == 'resume':
