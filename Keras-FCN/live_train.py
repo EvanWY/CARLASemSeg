@@ -33,6 +33,7 @@ from carla.sensor import Camera, Lidar
 from carla.settings import CarlaSettings
 from carla.tcp import TCPConnectionError
 from carla.util import print_over_same_line
+from PIL import Image as PImage
 
 
 def sim_frame_generator():
