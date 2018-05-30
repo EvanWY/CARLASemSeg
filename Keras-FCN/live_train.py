@@ -110,7 +110,7 @@ def zerg_generator(samples, batch_size=25):
     while 1:
         img_list = []
         seg_list = []
-        for batch_id in range(batch_size / 5):
+        for batch_id in range(batch_size // 5):
 
             #img = cv2.imread(batch_sample[0])
             #seg = cv2.imread(batch_sample[1])
