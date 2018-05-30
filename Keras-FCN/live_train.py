@@ -57,14 +57,14 @@ def sim_frame_generator():
 
                     camera0 = Camera('CameraRGB')
                     camera0.set_image_size(800, 600)
-                    #camera0.set_position(0.30, 0, 1.30)
-                    camera0.FOV = 60
+                    camera0.set_position(-10.30, 0, 1.30)
+                    #camera0.FOV = 60
                     settings.add_sensor(camera0)
 
                     camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
                     camera1.set_image_size(800, 600)
                     #camera1.set_position(0.30, 0, 1.30)
-                    camera1.FOV = 60
+                    #camera1.FOV = 60
                     settings.add_sensor(camera1)
 
                     scene = client.load_settings(settings)
@@ -105,8 +105,8 @@ def sim_frame_generator():
 
     
 
+sim_frame_generator_instance = sim_frame_generator()
 def zerg_generator(samples, batch_size=20):
-    sim_frame_generator_instance = sim_frame_generator()
     while 1:
         img_list = []
         seg_list = []
