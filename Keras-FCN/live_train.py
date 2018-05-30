@@ -83,7 +83,7 @@ def sim_frame_generator():
                             decoder_name='raw')
                         color = image.split()
                         image = PImage.merge("RGB", color[2::-1])
-                        image = np.array(image)
+                        image = np.array(image)[:, :, ::-1].copy() 
                         print ('image.shape')
                         print (image.shape)
                         
@@ -118,7 +118,9 @@ def zerg_generator(samples, batch_size=20):
             print ('after sim_frame_generator_instance')
             print (img.shape)
             print (seg.shape)
-            cv2.imwrite('tttttttttest.png', img)
+            cv2.imwrite('test_color.png', img)
+            correct_img = cv2.imread('visualize_imgs/rgb.png')
+            cv2.imwrite('correct_color.png', correct_img)
             exit()
 
             temp_ = seg[496:600,:,:]
