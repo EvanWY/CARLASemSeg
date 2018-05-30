@@ -152,6 +152,55 @@ def zerg_generator(samples, batch_size=20):
         y_train = np.array(seg_list).reshape(batch_size, 320, 320, 2)
         yield sklearn.utils.shuffle(X_train, y_train)
 
+def zerg_validation_generator(samples, batch_size=20):
+    num_samples = len(samples)
+    while 1: # Loop forever so the generator never terminates
+        sklearn.utils.shuffle(samples)
+        for offset in range(0, num_samples, batch_size // 2):
+            batch_samples = samples[offset:offset + batch_size // 2]
+
+            img_list = []
+            seg_list = []
+            for batch_sample in batch_samples:
+                img = cv2.imread(batch_sample[0])
+
+                seg = cv2.imread(batch_sample[1])
+                temp_ = seg[496:600,:,:]
+                temp_ = (temp_ != 10) * temp_
+                seg[496:600,:,:] = temp_
+
+                t = 600 - random.randint(0,12)
+                b = 0 + random.randint(0,12)
+                r = 800 - random.randint(0,16)
+                l = 0 + random.randint(0,16)
+                
+                img = img[b:t, l:r]
+                seg = seg[b:t, l:r]
+                
+
+                img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                
+                seg = cv2.resize(seg, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
+                seg_road = np.logical_or(seg == 7 ,seg == 6).astype(np.uint8)
+                seg_vehicle = (seg == 10).astype(np.uint8)
+                seg = np.zeros((320, 320, 2)).astype(np.uint8)
+                seg [:,:,0] = seg_road
+                seg [:,:,1] = seg_vehicle
+
+                img_flip = cv2.flip(img, 1)
+                seg_flip = cv2.flip(seg, 1)
+
+                img_list.append(img)
+                seg_list.append(seg)
+                img_list.append(img_flip)
+                seg_list.append(seg_flip)
+
+            # trim image to only see section with road
+            X_train = np.array(img_list).reshape(-1,320, 320, 3)
+            y_train = np.array(seg_list).reshape(-1,320, 320, 2)
+            yield sklearn.utils.shuffle(X_train, y_train)
+
 class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch, logs={}):
         img = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
@@ -183,8 +232,8 @@ if __name__ == '__main__':
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
-    train_generator = zerg_generator(train_samples, batch_size=20)
-    validation_generator = zerg_generator(validation_samples, batch_size=20)
+    train_generator = zerg_generator([], batch_size=20)
+    validation_generator = zerg_validation_generator(samples, batch_size=20)
 
     model = zerg_model(batch_shape=[20, 320, 320, 3])
 
