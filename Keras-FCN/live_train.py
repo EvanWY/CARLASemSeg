@@ -57,13 +57,13 @@ def sim_frame_generator():
 
                     camera0 = Camera('CameraRGB')
                     camera0.set_image_size(800, 600)
-                    camera0.set_position(1.2, 0, 1.3)
+                    camera0.set_position(1.3, 0, 1.3)
                     #camera0.FOV = 60
                     settings.add_sensor(camera0)
 
                     camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
                     camera1.set_image_size(800, 600)
-                    camera0.set_position(1.2, 0, 1.3)
+                    camera0.set_position(1.3, 0, 1.3)
                     #camera1.FOV = 60
                     settings.add_sensor(camera1)
 
