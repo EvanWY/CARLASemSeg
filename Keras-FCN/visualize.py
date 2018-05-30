@@ -58,7 +58,7 @@ for id in range(frames):
         visualization_img[:,:,0] = (B * 255).astype(np.uint8)
         visualization_img[:,:,1] = (G * 255).astype(np.uint8)
         visualization_img[:,:,2] = (R * 255).astype(np.uint8)
-    else
+    else:
         seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
         seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
         
