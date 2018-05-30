@@ -56,21 +56,18 @@ def sim_frame_generator():
 
                 camera0 = Camera('CameraRGB')
                 camera0.set_image_size(800, 600)
-                camera0.set_position(0.30, 0, 1.30)
+                #camera0.set_position(0.30, 0, 1.30)
                 settings.add_sensor(camera0)
 
                 camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
                 camera1.set_image_size(800, 600)
-                camera1.set_position(0.30, 0, 1.30)
+                #camera1.set_position(0.30, 0, 1.30)
                 settings.add_sensor(camera1)
-                print ('before load setting')
                 scene = client.load_settings(settings)
-                print ('after load setting')
 
                 number_of_player_starts = len(scene.player_start_spots)
                 player_start = random.randint(0, max(0, number_of_player_starts - 1))
 
-                print('Starting new episode at %r...' % scene.map_name)
                 client.start_episode(player_start)
 
                 for xx in range(300):
@@ -83,9 +80,7 @@ def sim_frame_generator():
                             decoder_name='raw')
                         color = image.split()
                         image = PImage.merge("RGB", color[2::-1])
-                        image = np.array(image)[:, :, ::-1].copy() 
-                        print ('image.shape')
-                        print (image.shape)
+                        image = np.array(image)[:, :, ::-1].copy()
                         
                         if name == 'CameraRGB':
                             img = image
@@ -113,15 +108,12 @@ def zerg_generator(samples, batch_size=20):
             #img = cv2.imread(batch_sample[0])
             #seg = cv2.imread(batch_sample[1])
 
-            print ('before sim_frame_generator_instance')
             img, seg = next(sim_frame_generator_instance)
-            print ('after sim_frame_generator_instance')
-            print (img.shape)
-            print (seg.shape)
-            cv2.imwrite('test_color.png', img)
-            correct_img = cv2.imread('visualize_imgs/rgb.png')
-            cv2.imwrite('correct_color.png', correct_img)
-            exit()
+            
+            if batch_id == 0:
+                cv2.imwrite('test_color.png', img)
+                correct_img = cv2.imread('visualize_imgs/rgb.png')
+                cv2.imwrite('correct_color.png', correct_img)
 
             temp_ = seg[496:600,:,:]
             temp_ = (temp_ != 10) * temp_
