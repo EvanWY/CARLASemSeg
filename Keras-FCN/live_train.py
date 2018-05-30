@@ -36,57 +36,68 @@ from carla.util import print_over_same_line
 
 
 def sim_frame_generator():
-    print ('initializing CARLA client connection')
-    with make_carla_client('localhost', 2000) as client:
-        print('CarlaClient connected !')
-        while 1:
-            #init
-            settings = CarlaSettings()
-            settings.set(
-                SynchronousMode=True,
-                SendNonPlayerAgentsInfo=True,
-                NumberOfVehicles=20,
-                NumberOfPedestrians=40,
-                WeatherId=random.choice([1, 3, 7, 8, 14]),
-                QualityLevel='Epic')
-            settings.randomize_seeds()
-            settings.randomize_weather()
+    while 1:
+        print ('initializing CARLA client connection')
+        with make_carla_client('localhost', 2000) as client:
+            print('CarlaClient connected !')
+            while 1:
+                #init
+                settings = CarlaSettings()
+                settings.set(
+                    SynchronousMode=True,
+                    SendNonPlayerAgentsInfo=True,
+                    NumberOfVehicles=20,
+                    NumberOfPedestrians=40,
+                    WeatherId=random.choice([1, 3, 7, 8, 14]),
+                    QualityLevel='Epic')
+                settings.randomize_seeds()
+                settings.randomize_weather()
 
-            camera0 = Camera('CameraRGB')
-            camera0.set_image_size(800, 600)
-            camera0.set_position(0.30, 0, 1.30)
-            settings.add_sensor(camera0)
+                camera0 = Camera('CameraRGB')
+                camera0.set_image_size(800, 600)
+                camera0.set_position(0.30, 0, 1.30)
+                settings.add_sensor(camera0)
 
-            camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
-            camera1.set_image_size(800, 600)
-            camera1.set_position(0.30, 0, 1.30)
-            settings.add_sensor(camera1)
-            print ('before load setting')
-            scene = client.load_settings(settings)
-            print ('after load setting')
+                camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
+                camera1.set_image_size(800, 600)
+                camera1.set_position(0.30, 0, 1.30)
+                settings.add_sensor(camera1)
+                print ('before load setting')
+                scene = client.load_settings(settings)
+                print ('after load setting')
 
-            number_of_player_starts = len(scene.player_start_spots)
-            player_start = random.randint(0, max(0, number_of_player_starts - 1))
+                number_of_player_starts = len(scene.player_start_spots)
+                player_start = random.randint(0, max(0, number_of_player_starts - 1))
 
-            print('Starting new episode at %r...' % scene.map_name)
-            client.start_episode(player_start)
+                print('Starting new episode at %r...' % scene.map_name)
+                client.start_episode(player_start)
 
-            for xx in range(300):
-                measurements, sensor_data = client.read_data()
-                for name, measurement in sensor_data.items():
-                    if name == 'CameraRGB':
-                        img = measurement.raw_data
-                    elif name == 'CameraSemSeg':
-                        seg = measurement.raw_data
-                    else:
-                        print ('sensor name incorrect: %s'%name)
-                        exit()
+                for xx in range(300):
+                    measurements, sensor_data = client.read_data()
+                    for name, measurement in sensor_data.items():
+                        image = PImage.frombytes(
+                            mode='RGBA',
+                            size=(measurement.width, measurement.height),
+                            data=measurement.raw_data,
+                            decoder_name='raw')
+                        color = image.split()
+                        image = PImage.merge("RGB", color[2::-1])
+                        print ('image.shape')
+                        print (image.shape)
+                        
+                        if name == 'CameraRGB':
+                            img = image
+                        elif name == 'CameraSemSeg':
+                            seg = image
+                        else:
+                            print ('sensor name incorrect: %s'%name)
+                            exit()
 
-                control = measurements.player_measurements.autopilot_control
-                control.steer += random.uniform(-0.1, 0.1)
-                client.send_control(control)
+                    control = measurements.player_measurements.autopilot_control
+                    control.steer += random.uniform(-0.1, 0.1)
+                    client.send_control(control)
 
-                yield img, seg
+                    yield img, seg
 
     
 
@@ -101,7 +112,7 @@ def zerg_generator(samples, batch_size=20):
             #seg = cv2.imread(batch_sample[1])
 
             print ('before sim_frame_generator_instance')
-            img, seg = sim_frame_generator_instance.next()
+            img, seg = next(sim_frame_generator_instance)
             print ('after sim_frame_generator_instance')
             print (img.shape)
             print (seg.shape)
