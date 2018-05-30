@@ -106,11 +106,11 @@ def sim_frame_generator():
     
 
 sim_frame_generator_instance = sim_frame_generator()
-def zerg_generator(samples, batch_size=50):
+def zerg_generator(samples, batch_size=25):
     while 1:
         img_list = []
         seg_list = []
-        for batch_id in range(batch_size / 10):
+        for batch_id in range(batch_size / 5):
 
             #img = cv2.imread(batch_sample[0])
             #seg = cv2.imread(batch_sample[1])
@@ -124,7 +124,7 @@ def zerg_generator(samples, batch_size=50):
             temp_ = (temp_ != 10) * temp_
             seg_ori[496:600,:,:] = temp_
 
-            for ii in range(10):
+            for ii in range(5):
                 t = 600 - random.randint(0,12)
                 b = 0 + random.randint(0,12)
                 r = 800 - random.randint(0,16)
@@ -151,7 +151,7 @@ def zerg_generator(samples, batch_size=50):
         y_train = np.array(seg_list).reshape(batch_size, 320, 320, 2)
         yield sklearn.utils.shuffle(X_train, y_train)
 
-def zerg_validation_generator(samples, batch_size=50):
+def zerg_validation_generator(samples, batch_size=25):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         sklearn.utils.shuffle(samples)
@@ -206,7 +206,7 @@ class FitGenCallback(keras.callbacks.Callback):
         visualization_img = img
         img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         
-        z = np.zeros([50,320,320,3])
+        z = np.zeros([25,320,320,3])
         z[0,:,:,:] = img
         seg = self.model.predict(z)[0,:,:,:]
         seg = seg.reshape(320,320,2)
@@ -232,10 +232,10 @@ if __name__ == '__main__':
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
-    train_generator = zerg_generator([], batch_size=50)
-    validation_generator = zerg_validation_generator(samples, batch_size=50)
+    train_generator = zerg_generator([], batch_size=25)
+    validation_generator = zerg_validation_generator(samples, batch_size=25)
 
-    model = zerg_model(batch_shape=[50, 320, 320, 3])
+    model = zerg_model(batch_shape=[25, 320, 320, 3])
 
     train_mode = sys.argv[-1]
     if train_mode == 'resume':
