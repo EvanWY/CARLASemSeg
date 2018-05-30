@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
@@ -22,9 +23,6 @@ from sklearn.model_selection import train_test_split
 import keras
 import datetime
 import random
-
-from __future__ import print_function
-
 import argparse
 import logging
 import random
@@ -44,11 +42,36 @@ def init_sim_connect():
     with make_carla_client('localhost', 2000) as carla_client:
         print('CarlaClient connected !')
         client = carla_client
+        settings = CarlaSettings()
+        settings.set(
+            SynchronousMode=True,
+            SendNonPlayerAgentsInfo=True,
+            NumberOfVehicles=20,
+            NumberOfPedestrians=40,
+            WeatherId=random.choice([1, 3, 7, 8, 14]),
+            QualityLevel='Epic')
+        settings.randomize_seeds()
+        settings.randomize_weather()
 
-frame_count = 0
+        camera0 = Camera('CameraRGB')
+        camera0.set_image_size(800, 600)
+        camera0.set_position(0.30, 0, 1.30)
+        settings.add_sensor(camera0)
+
+        camera1 = Camera('CameraSemSeg', PostProcessing='SemanticSegmentation')
+        camera1.set_image_size(800, 600)
+        camera1.set_position(0.30, 0, 1.30)
+        settings.add_sensor(camera1)
+        print ('before load setting')
+        scene = client.load_settings(settings)
+        print ('after load setting')
+
+frame_count = 300
 def get_next_frame():
     global frame_count
     global client
+    if client is None:
+        init_sim_connect()
     frame_count += 1
     if frame_count >= 300:
         frame_count = 0
@@ -73,7 +96,9 @@ def get_next_frame():
         camera1.set_image_size(800, 600)
         camera1.set_position(0.30, 0, 1.30)
         settings.add_sensor(camera1)
+        print ('before load setting')
         scene = client.load_settings(settings)
+        print ('after load setting')
 
         number_of_player_starts = len(scene.player_start_spots)
         player_start = random.randint(0, max(0, number_of_player_starts - 1))
@@ -103,14 +128,18 @@ def zerg_generator(samples, batch_size=20):
     while 1:
         img_list = []
         seg_list = []
-        for batch_id in batch_size:
+        for batch_id in range(batch_size):
 
             #img = cv2.imread(batch_sample[0])
             #seg = cv2.imread(batch_sample[1])
 
+            print ('before hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
             img, seg = get_next_frame()
-
-
+            print ('after hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+            print (img.shape)
+            print (seg.shape)
+            cv2.imwrite('tttttttttest.png', img)
+            exit()
 
             temp_ = seg[496:600,:,:]
             temp_ = (temp_ != 10) * temp_
@@ -167,7 +196,6 @@ class FitGenCallback(keras.callbacks.Callback):
         return
 
 if __name__ == '__main__':
-    init_sim_connect()
     samples = []
     for line in range(1000):
         samples.append(['../Train/CameraRGB/%d.png' % line, '../Train/CameraSeg/%d.png' % line])
