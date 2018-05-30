@@ -46,13 +46,26 @@ for id in range(frames):
 
     seg = model.predict(img.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)
-    seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
-    seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
-    
-    visualization_img = visualization_img // 2
-    visualization_img[:,:,0] += seg_road
-    visualization_img[:,:,1] += seg_vehicle
-    
+
+    if 'road_heat' == sys.argv[-1]:
+        pass
+    elif 'vehicle_heat' == sys.argv[-1]):
+        heat = seg[:,:,1].clip(0,1)
+        R = heat.clip(0,0.3333) * 3
+        G = (heat.clip(0.3334, 0.6666) - 0.3333) * 3
+        B = (heat.clip(0.6667, 1) - 0.6666) * 3
+        visualization_img = visualization_img * 0
+        visualization_img[:,:,0] = (B * 255).astype(np.uint8)
+        visualization_img[:,:,1] = (G * 255).astype(np.uint8)
+        visualization_img[:,:,2] = (R * 255).astype(np.uint8)
+    else
+        seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
+        seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
+        
+        visualization_img = visualization_img // 2
+        visualization_img[:,:,0] += seg_road
+        visualization_img[:,:,1] += seg_vehicle
+        
     visualization_img = cv2.resize(visualization_img, (800, 600), interpolation = cv2.INTER_CUBIC)
     # cv2.imwrite('visualize_imgs/seg.png', rgb_fullsize, interpolation = cv2.INTER_NEAREST))
     out_video[id,:,:,:] = visualization_img

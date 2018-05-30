@@ -6,3 +6,6 @@ Car F score: 0.292 | Car Precision: 0.100 | Car Recall: 0.562 | Road F score: 0.
 
 # filtered out eagle car, car threshold: 0.2, road threshold: 0.8, 172 epochs
 Car F score: 0.322 | Car Precision: 0.156 | Car Recall: 0.439 | Road F score: 0.910 | Road Precision: 1.000 | Road Recall: 0.670 | Averaged F score: 0.616
+
+# loss: mse, color_space: hsv, 101 epochs
+Car F score: 0.393 | Car Precision: 0.492 | Car Recall: 0.374 | Road F score: 0.777 | Road Precision: 0.951 | Road Recall: 0.448 | Averaged F score: 0.585 
