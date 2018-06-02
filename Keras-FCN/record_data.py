@@ -26,7 +26,7 @@ from carla.util import print_over_same_line
 from PIL import Image as PImage
 
 def sim_frame_generator():
-    frame = 0
+    frame = 4000
     print ('initializing CARLA client connection')
     with make_carla_client('localhost', 2000, timeout=300) as client:
         try:
@@ -37,8 +37,8 @@ def sim_frame_generator():
                 settings.set(
                     SynchronousMode=True,
                     SendNonPlayerAgentsInfo=True,
-                    NumberOfVehicles=100,#random.randint(3,10),
-                    NumberOfPedestrians=10,
+                    NumberOfVehicles=random.choice([30, 50, 120, 200, 1000]),
+                    NumberOfPedestrians=random.choice([0, 15, 30, 50]),
                     WeatherId=random.choice([1, 2, 8, 1, 2, 8, 1, 2, 3, 6, 7, 8]),
                     QualityLevel='Epic')
                 settings.randomize_seeds()
@@ -62,9 +62,8 @@ def sim_frame_generator():
                 player_start = random.randint(0, max(0, number_of_player_starts - 1))
 
                 client.start_episode(player_start)
-
-                print ("saving frame id: %d"%frame)
-                for xx in range(1000):
+                
+                for xx in range(500):
                     measurements, sensor_data = client.read_data()
                     for name, measurement in sensor_data.items():
                         image = PImage.frombytes(
@@ -83,8 +82,10 @@ def sim_frame_generator():
                     img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%d.png'%frame,"PNG")
                     seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%d.png'%frame,"PNG")
                     frame += 1
-                    if (frame >= 100000):
+                    if (frame >= 50000):
                         return
+                    if (frame % 100 == 0):
+                        print ("saving frame id: %d, time:%f".format(frame, time.time))
 
                     control = measurements.player_measurements.autopilot_control
                     control.steer += random.uniform(-0.1, 0.1)
