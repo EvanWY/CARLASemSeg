@@ -51,7 +51,7 @@ def sim_frame_generator():
                         NumberOfVehicles=20,
                         NumberOfPedestrians=40,
                         WeatherId=random.choice([1, 2, 8, 1, 2, 8, 1, 2, 3, 6, 7, 8]),
-                        QualityLevel='Epic1')
+                        QualityLevel='Epic')
                     settings.randomize_seeds()
                     #settings.randomize_weather()
 
