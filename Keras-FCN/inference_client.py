@@ -1,4 +1,4 @@
-import zmq
+import zmq, sys
 
 file = sys.argv[-1]
 
