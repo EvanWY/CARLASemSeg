@@ -27,7 +27,7 @@ from PIL import Image as PImage
 from subprocess import call
 
 def sim_frame_generator():
-    call(['aws', 's3', 'sync', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
+    call(['aws', 's3', 'sync', '--quiet', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
     frame = 0
     print ('initializing CARLA client connection')
     with make_carla_client('localhost', 2000, timeout=300) as client:
@@ -81,8 +81,8 @@ def sim_frame_generator():
                         elif name == 'CameraSemSeg':
                             seg = image
                     
-                    img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%7d.png'%frame,"PNG")
-                    seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%7d.png'%frame,"PNG")
+                    img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
+                    seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
                     frame += 1
                     if (frame >= 50000):
                         return
@@ -93,7 +93,7 @@ def sim_frame_generator():
                     control.steer += random.uniform(-0.1, 0.1)
                     client.send_control(control)
 
-                    call(['aws', 's3', 'sync', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
+                call(['aws', 's3', 'sync', '--quiet', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
                     
         finally:
             pass
