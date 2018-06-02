@@ -95,7 +95,7 @@ class FitGenCallback(keras.callbacks.Callback):
 
                 cv2.imwrite('visualize_imgs/seg-epoch{0:03d}-{1:03d}.png'.format(epoch, idx), visualization_img)
             except:
-                print "Unexpected error:", sys.exc_info()[0]
+                print ("Unexpected error:" + sys.exc_info()[0])
 
         model_name = 'zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
         self.model.save(model_name)
@@ -108,7 +108,7 @@ class FitGenCallback(keras.callbacks.Callback):
 
 if __name__ == '__main__':
     samples = []
-    for line in range(72000):
+    for line in range(74000):
         samples.append(['../Train/CameraRGB/%07d.png' % line, '../Train/CameraSeg/%07d.png' % line])
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
