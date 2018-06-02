@@ -63,7 +63,7 @@ def sim_frame_generator():
 
                 client.start_episode(player_start)
 
-                print ("saving frame id: " + frame)
+                print ("saving frame id: %d"%frame)
                 for xx in range(1000):
                     measurements, sensor_data = client.read_data()
                     for name, measurement in sensor_data.items():
