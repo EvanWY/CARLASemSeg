@@ -2,7 +2,7 @@ import zmq, sys
 
 file = sys.argv[-1]
 
-if file == 'run.py':
+if file == 'inference_client.py':
     print ("Error loading video")
     quit
 
