@@ -24,8 +24,10 @@ from carla.settings import CarlaSettings
 from carla.tcp import TCPConnectionError
 from carla.util import print_over_same_line
 from PIL import Image as PImage
+from subprocess import call
 
 def sim_frame_generator():
+    call(['aws', 's3', 'sync', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
     frame = 0
     print ('initializing CARLA client connection')
     with make_carla_client('localhost', 2000, timeout=300) as client:
@@ -90,6 +92,8 @@ def sim_frame_generator():
                     control = measurements.player_measurements.autopilot_control
                     control.steer += random.uniform(-0.1, 0.1)
                     client.send_control(control)
+
+                    call(['aws', 's3', 'sync', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
                     
         finally:
             pass
