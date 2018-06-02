@@ -100,6 +100,9 @@ class FitGenCallback(keras.callbacks.Callback):
         model_name = 'zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
         self.model.save(model_name)
         call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
+        call(['rm', 'zerg_model.h5'])
+        call(['mv', model_name, 'zerg_model.h5'])
+        call(['tester', '"python run.py"'])
 
         return
 
