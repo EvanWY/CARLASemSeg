@@ -47,7 +47,7 @@ def sim_frame_generator():
                 settings.set(
                     SynchronousMode=True,
                     SendNonPlayerAgentsInfo=True,
-                    NumberOfVehicles=100,random.randint(3,10),
+                    NumberOfVehicles=100,#random.randint(3,10),
                     NumberOfPedestrians=10,
                     WeatherId=random.choice([1, 2, 8, 1, 2, 8, 1, 2, 3, 6, 7, 8]),
                     QualityLevel='Epic')
