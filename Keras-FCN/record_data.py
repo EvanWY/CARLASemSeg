@@ -87,7 +87,7 @@ def sim_frame_generator():
                     if (frame >= 50000):
                         return
                     if (frame % 100 == 0):
-                        print ("saving frame id: %d, time:%f".format(frame, time.time))
+                        print ("saving frame id: {}, time:{}".format(frame, time.time))
 
                     control = measurements.player_measurements.autopilot_control
                     control.steer += random.uniform(-0.1, 0.1)
