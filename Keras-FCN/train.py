@@ -77,6 +77,7 @@ class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch, logs={}):
         for idx in range(10):
             try:
+                print 'visualize_imgs/rgb{0:03d}.png'.format(idx)
                 img = cv2.resize(cv2.imread('visualize_imgs/rgb{0:03d}.png'.format(idx)), (320, 320), interpolation = cv2.INTER_CUBIC)
                 visualization_img = img
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
