@@ -101,7 +101,7 @@ class FitGenCallback(keras.callbacks.Callback):
         self.model.save(model_name)
         call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
         call(['rm', 'zerg_model.h5'])
-        call(['mv', model_name, 'zerg_model.h5'])
+        call(['cp', model_name, 'zerg_model.h5'])
         call(['tester', '"python run.py"'])
 
         return
