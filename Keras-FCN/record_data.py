@@ -64,26 +64,27 @@ def sim_frame_generator():
                 
                 for xx in range(500):
                     measurements, sensor_data = client.read_data()
-                    # for name, measurement in sensor_data.items():
-                    #     image = PImage.frombytes(
-                    #         mode='RGBA',
-                    #         size=(measurement.width, measurement.height),
-                    #         data=measurement.raw_data,
-                    #         decoder_name='raw')
-                    #     color = image.split()
-                    #     image = PImage.merge("RGB", color[2::-1])
+                    for name, measurement in sensor_data.items():
+                        image = PImage.frombytes(
+                            mode='RGBA',
+                            size=(measurement.width, measurement.height),
+                            data=measurement.raw_data,
+                            decoder_name='raw')
+                        color = image.split()
+                        image = PImage.merge("RGB", color[2::-1])
                         
-                    #     if name == 'CameraRGB':
-                    #         img = image
-                    #     elif name == 'CameraSemSeg':
-                    #         seg = image
+                        if name == 'CameraRGB':
+                            img = image
+                        elif name == 'CameraSemSeg':
+                            seg = image
                     
-                    # img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
-                    # seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
+                    img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
+                    seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
                     frame += 1
                     if (frame >= 100000):
                         return
                     if (frame % 100 == 0):
+                        print()
                         print ("saving frame id: {}, time:{}".format(frame, time.time()))
                         print()
 
