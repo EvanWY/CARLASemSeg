@@ -26,7 +26,7 @@ from carla.util import print_over_same_line
 from PIL import Image as PImage
 
 def sim_frame_generator():
-    frame = 4000
+    frame = 0
     print ('initializing CARLA client connection')
     with make_carla_client('localhost', 2000, timeout=300) as client:
         try:
@@ -79,8 +79,8 @@ def sim_frame_generator():
                         elif name == 'CameraSemSeg':
                             seg = image
                     
-                    img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%d.png'%frame,"PNG")
-                    seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%d.png'%frame,"PNG")
+                    img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%7d.png'%frame,"PNG")
+                    seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%7d.png'%frame,"PNG")
                     frame += 1
                     if (frame >= 50000):
                         return
