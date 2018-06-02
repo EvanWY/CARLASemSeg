@@ -80,9 +80,9 @@ def sim_frame_generator():
                     
                     # img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
                     # seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
-                    # frame += 1
-                    # if (frame >= 100000):
-                    #     return
+                    frame += 1
+                    if (frame >= 100000):
+                        return
                     if (frame % 100 == 0):
                         print ("saving frame id: {}, time:{}".format(frame, time.time()))
                         print()
