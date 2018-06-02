@@ -6,10 +6,6 @@ import os
 import sys
 import pickle
 
-from models import *
-from utils.loss_function import *
-from utils.metrics import *
-from utils.SegDataGenerator import *
 import time
 import datetime
 import random
@@ -84,7 +80,7 @@ def sim_frame_generator():
                     #img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
                     #seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
                     frame += 1
-                    if (frame >= 50000):
+                    if (frame >= 100000):
                         return
                     if (frame % 100 == 0):
                         print ("saving frame id: {}, time:{}".format(frame, time.time()))
