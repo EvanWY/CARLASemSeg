@@ -22,13 +22,15 @@ from sklearn.model_selection import train_test_split
 import keras
 import datetime
 import random
+from subprocess import call
 
 def zerg_generator(samples, batch_size=20):
+    print ('zerg_generator is called')
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         sklearn.utils.shuffle(samples)
-        for offset in range(0, num_samples, batch_size // 2):
-            batch_samples = samples[offset:offset + batch_size // 2]
+        for offset in range(0, num_samples+1-batch_size, batch_size):
+            batch_samples = samples[offset:offset + batch_size]
 
             img_list = []
             seg_list = []
@@ -40,15 +42,14 @@ def zerg_generator(samples, batch_size=20):
                 temp_ = (temp_ != 10) * temp_
                 seg[496:600,:,:] = temp_
 
-                t = 600 - random.randint(0,12)
-                b = 0 + random.randint(0,12)
-                r = 800 - random.randint(0,16)
-                l = 0 + random.randint(0,16)
+                # t = 600 - random.randint(0,12)
+                # b = 0 + random.randint(0,12)
+                # r = 800 - random.randint(0,16)
+                # l = 0 + random.randint(0,16)
                 
-                img = img[b:t, l:r]
-                seg = seg[b:t, l:r]
+                # img = img[b:t, l:r]
+                # seg = seg[b:t, l:r]
                 
-
                 img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 
@@ -59,13 +60,13 @@ def zerg_generator(samples, batch_size=20):
                 seg [:,:,0] = seg_road
                 seg [:,:,1] = seg_vehicle
 
-                img_flip = cv2.flip(img, 1)
-                seg_flip = cv2.flip(seg, 1)
+                # img_flip = cv2.flip(img, 1)
+                # seg_flip = cv2.flip(seg, 1)
 
                 img_list.append(img)
                 seg_list.append(seg)
-                img_list.append(img_flip)
-                seg_list.append(seg_flip)
+                # img_list.append(img_flip)
+                # seg_list.append(seg_flip)
 
             # trim image to only see section with road
             X_train = np.array(img_list).reshape(-1,320, 320, 3)
@@ -74,32 +75,38 @@ def zerg_generator(samples, batch_size=20):
 
 class FitGenCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch, logs={}):
-        img = cv2.resize(cv2.imread('visualize_imgs/rgb.png'), (320, 320), interpolation = cv2.INTER_CUBIC)
-        visualization_img = img
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        
-        z = np.zeros([20,320,320,3])
-        z[0,:,:,:] = img
-        seg = self.model.predict(z)[0,:,:,:]
-        seg = seg.reshape(320,320,2)
-        seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
-        seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
-        
-        visualization_img = visualization_img // 2
-        visualization_img[:,:,0] += seg_road
-        visualization_img[:,:,1] += seg_vehicle
+        for idx in range(10):
+            try:
+                img = cv2.resize(cv2.imread('visualize_imgs/rgb{0:03d}.png'.format(idx)), (320, 320), interpolation = cv2.INTER_CUBIC)
+                visualization_img = img
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                
+                z = np.zeros([20,320,320,3])
+                z[0,:,:,:] = img
+                
+                seg = self.model.predict(z)[0,:,:,:]
+                seg = seg.reshape(320,320,2)
+                seg_road = (seg[:,:,0] > 0.5).astype(np.uint8) * 127
+                seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8) * 127
+                
+                visualization_img = visualization_img // 2
+                visualization_img[:,:,0] += seg_road
+                visualization_img[:,:,1] += seg_vehicle
 
-        cv2.imwrite('visualize_imgs/seg-epoch_%03d.png' % epoch, visualization_img)
+                cv2.imwrite('visualize_imgs/seg-epoch{0:03d}-{1:03d}.png'.format(epoch, idx), visualization_img)
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
 
-        if (epoch % 20 == 1):
-            self.model.save('zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch))
+        model_name = 'zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
+        self.model.save(model_name)
+        call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
 
         return
 
 if __name__ == '__main__':
     samples = []
-    for line in range(1000):
-        samples.append(['../Train/CameraRGB/%d.png' % line, '../Train/CameraSeg/%d.png' % line])
+    for line in range(72000):
+        samples.append(['../Train/CameraRGB/%07d.png' % line, '../Train/CameraSeg/%07d.png' % line])
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
     # compile and train the model using the generator function
@@ -124,12 +131,14 @@ if __name__ == '__main__':
 
     model.fit_generator(
         train_generator,
-        steps_per_epoch = 45, 
-        epochs = 1720,
+        steps_per_epoch = 500, 
+        epochs = 300,
         validation_data = validation_generator, 
-        validation_steps = 5,
+        validation_steps = 50,
         callbacks = [FitGenCallback()]
     )
 
-    model.save('zerg_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S"))
+    model_name = 'zerg_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
+    model.save(model_name)
+    call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
     exit()
