@@ -81,8 +81,8 @@ def sim_frame_generator():
                         elif name == 'CameraSemSeg':
                             seg = image
                     
-                    img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
-                    seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
+                    #img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
+                    #seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
                     frame += 1
                     if (frame >= 50000):
                         return
