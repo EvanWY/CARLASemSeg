@@ -36,7 +36,7 @@ context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5555")
 print ("waiting for message")
-message = socket.recv()
+message = socket.recv_string()
 print ("got message! message: " + message)
 file = message
 
@@ -79,4 +79,4 @@ print ("done processing frames")
 
 # Print output in proper json format
 #print (json.dumps(answer_key))
-socket.send(json.dumps(answer_key))
+socket.send_string(json.dumps(answer_key))
