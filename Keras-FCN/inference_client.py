@@ -4,7 +4,7 @@ file = sys.argv[-1]
 
 if file == 'inference_client.py':
     print ("Error loading video")
-    quit
+    exit()
 
 context = zmq.Context()
 
