@@ -89,7 +89,7 @@ def sim_frame_generator():
 
                     fps = 1.0/(time.time() - last_frame_time)
                     last_frame_time = time.time()
-                    sys.stdout.write("\r" + fps)
+                    sys.stdout.write("\r" + str(fps))
                     sys.stdout.flush()
 
                     control = measurements.player_measurements.autopilot_control
