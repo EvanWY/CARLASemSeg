@@ -5,22 +5,12 @@ from pylab import *
 import os
 import sys
 import pickle
-from keras.optimizers import SGD, Adam, Nadam
-from keras.callbacks import *
-from keras.objectives import *
-from keras.metrics import binary_accuracy
-from keras.models import load_model
-import keras.backend as K
-#import keras.utils.visualize_util as vis_util
 
 from models import *
 from utils.loss_function import *
 from utils.metrics import *
 from utils.SegDataGenerator import *
 import time
-import sklearn
-from sklearn.model_selection import train_test_split
-import keras
 import datetime
 import random
 import argparse
