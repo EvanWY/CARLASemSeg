@@ -25,6 +25,7 @@ from subprocess import call
 def sim_frame_generator():
     call(['aws', 's3', 'sync', '--quiet', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
     frame = 0
+    last_frame_time = time.time()
     print ('initializing CARLA client connection')
     with make_carla_client('localhost', 2000, timeout=300) as client:
         try:
@@ -82,8 +83,14 @@ def sim_frame_generator():
                     # frame += 1
                     # if (frame >= 100000):
                     #     return
-                    # if (frame % 100 == 0):
-                    #     print ("saving frame id: {}, time:{}".format(frame, time.time()))
+                    if (frame % 100 == 0):
+                        print ("saving frame id: {}, time:{}".format(frame, time.time()))
+                        print()
+
+                    fps = 1.0/(time.time() - last_frame_time)
+                    last_frame_time = time.time()
+                    sys.stdout.write("\r" + fps)
+                    sys.stdout.flush()
 
                     control = measurements.player_measurements.autopilot_control
                     control.steer += random.uniform(-0.1, 0.1)
