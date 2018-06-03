@@ -1,5 +1,5 @@
 #!/bin/bash 
-for i in `seq 0.0 0.03 0.3`;
+for i in `seq 0.0 0.01 0.1`;
 do
     ROAD_TH=0.57
     ROAD_FADE=0
