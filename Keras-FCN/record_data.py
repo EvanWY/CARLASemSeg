@@ -24,7 +24,7 @@ from subprocess import call
 
 def sim_frame_generator():
     call(['aws', 's3', 'sync', '--quiet', '/home/workspace/CARLASemSeg/Train', 's3://yang-carla-train'])
-    frame = 0
+    frame = 100000
     last_frame_time = time.time()
     print ('initializing CARLA client connection')
     with make_carla_client('localhost', 2000, timeout=300) as client:
@@ -81,7 +81,7 @@ def sim_frame_generator():
                     img.save('/home/workspace/CARLASemSeg/Train/CameraRGB/%07d.png'%frame,"PNG")
                     seg.save('/home/workspace/CARLASemSeg/Train/CameraSeg/%07d.png'%frame,"PNG")
                     frame += 1
-                    if (frame >= 100000):
+                    if (frame >= 200000):
                         return
                     if (frame % 100 == 0):
                         print()
