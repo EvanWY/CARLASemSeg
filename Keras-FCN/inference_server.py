@@ -72,6 +72,7 @@ while True:
 
         new_seg = model.predict(img.reshape(1,320,320,3)).reshape(320,320,2)
         if frame % 200 == 2:
+            print ('processing frame:' + str(frame))
             seg = new_seg
         else:
             seg[:,:,0] *= road_fade
