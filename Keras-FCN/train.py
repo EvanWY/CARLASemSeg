@@ -97,12 +97,9 @@ class FitGenCallback(keras.callbacks.Callback):
             except:
                 print ("Unexpected error:" + sys.exc_info()[0])
 
-        model_name = 'zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
+        model_name = 'terran_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
         self.model.save(model_name)
         call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
-        # call(['rm', 'zerg_model.h5'])
-        # call(['cp', model_name, 'zerg_model.h5'])
-        # call(['/home/workspace/____/tester', 'python run.py'])
 
         return
 
@@ -120,7 +117,7 @@ if __name__ == '__main__':
 
     train_mode = sys.argv[-1]
     if train_mode == 'resume':
-        model.load_weights('zerg_model.h5')
+        model.load_weights('terran_model.h5')
     elif train_mode == 'new':
         pass
     else:
@@ -141,7 +138,7 @@ if __name__ == '__main__':
         callbacks = [FitGenCallback()]
     )
 
-    model_name = 'zerg_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
+    model_name = 'terran_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
     model.save(model_name)
     call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
     exit()

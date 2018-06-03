@@ -50,7 +50,7 @@ answer_key = {}
 frame = 1
 
 model = zerg_model(batch_shape=[1, 320, 320, 3])
-model.load_weights('zerg_model.h5')
+model.load_weights('terran_model.h5')
 
 for rgb_frame in video:
     
