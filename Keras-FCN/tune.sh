@@ -1,13 +1,21 @@
 #!/bin/bash 
-for i in `seq 0.0 0.01 0.1`;
+for name in `cat modelname.txt`;
 do
     ROAD_TH=0.57
     ROAD_FADE=0
 
     VEH_TH=0.25
     VEH_FADE=0
-    echo "testing with ROAD_TH=$ROAD_TH, VEH_TH=$VEH_TH"
-    echo "WY_echo" | grader "python inference_client.py $ROAD_TH $VEH_TH $ROAD_FADE $VEH_FADE" | grep "Car F score:" | (echo -n "road_th: $ROAD_TH | road_fade: $ROAD_FADE | veh_th: $VEH_TH | veh_fade: $VEH_FADE | " && cat) >> log_hyper_tune.txt
+
+    rm terran_model.h5
+    aws s3 cp $name terran_model.h5
+    
+    #echo "testing with ROAD_TH=$ROAD_TH, VEH_TH=$VEH_TH"
+    #echo "WY_echo" | grader "python inference_client.py $ROAD_TH $VEH_TH $ROAD_FADE $VEH_FADE" | grep "Car F score:" | (echo -n "road_th: $ROAD_TH | road_fade: $ROAD_FADE | veh_th: $VEH_TH | veh_fade: $VEH_FADE | " && cat) >> log_hyper_tune.txt
+    $name >> log_model.txt
+    #echo "WY_echo" | grader "python inference_client.py $ROAD_TH $VEH_TH $ROAD_FADE $VEH_FADE" | grep "Car F score:" >> log_model.txt
+    echo "WY_echo" | grader "python run.py $ROAD_TH $VEH_TH" | grep "Car F score:" >> log_model.txt
+
 done 
 
 #
