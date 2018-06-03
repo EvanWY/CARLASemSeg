@@ -44,6 +44,10 @@ socket.bind("tcp://*:5555")
 
 while True:
     print ("waiting for message")
+    road_th = float(socket.recv_string())
+    veh_th = float(socket.recv_string())
+    road_fade = float(socket.recv_string())
+    veh_fade = float(socket.recv_string())
     message = socket.recv_string()
     print ("got message! message: " + message)
     file = message
@@ -59,15 +63,22 @@ while True:
 
 
     print ("start processing frames ...")
+    seg = np.zeros(320,320,2)
     for rgb_frame in video:
         
         img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
         #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        seg = model.predict(img.reshape(1,320,320,3))
-        seg = seg.reshape(320,320,2)
-        seg_road = (seg[:,:,0] > 0.57).astype(np.uint8)
-        seg_vehicle = (seg[:,:,1] > 0.20).astype(np.uint8)
+        new_seg = model.predict(img.reshape(1,320,320,3)).reshape(320,320,2)
+        if frame % 200 == 2:
+            seg = new_seg
+        else:
+            seg[:,:,0] *= road_fade
+            seg[:,:,1] *= veh_fade
+            seg += new_seg
+
+        seg_road = (seg[:,:,0] > road_th).astype(np.uint8)
+        seg_vehicle = (seg[:,:,1] > veh_th).astype(np.uint8)
         
         seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
         seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
