@@ -31,7 +31,7 @@ if file == 'run.py':
     print ("Error loading video")
     quit
 
-os.opoen('echo "{0}" > log.txt'.format(str(sys.argv)))
+os.popen('echo "{0}" > log.txt'.format(str(sys.argv)))
 exit()
 
 # Define encoder function
