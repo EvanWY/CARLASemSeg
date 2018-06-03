@@ -12,6 +12,8 @@ do
     
     #echo "testing with ROAD_TH=$ROAD_TH, VEH_TH=$VEH_TH"
     #echo "WY_echo" | grader "python inference_client.py $ROAD_TH $VEH_TH $ROAD_FADE $VEH_FADE" | grep "Car F score:" | (echo -n "road_th: $ROAD_TH | road_fade: $ROAD_FADE | veh_th: $VEH_TH | veh_fade: $VEH_FADE | " && cat) >> log_hyper_tune.txt
+    echo " " >> log_model.txt
+
     echo $name >> log_model.txt
     #echo "WY_echo" | grader "python inference_client.py $ROAD_TH $VEH_TH $ROAD_FADE $VEH_FADE" | grep "Car F score:" >> log_model.txt
     echo "WY_echo" | grader "python run.py $ROAD_TH $VEH_TH" | grep "Car F score:" >> log_model.txt
