@@ -45,9 +45,13 @@ socket.bind("tcp://*:5555")
 while True:
     print ("waiting for message")
     road_th = float(socket.recv_string())
+    socket.send()
     veh_th = float(socket.recv_string())
+    socket.send()
     road_fade = float(socket.recv_string())
+    socket.send()
     veh_fade = float(socket.recv_string())
+    socket.send()
     message = socket.recv_string()
     
     print ("got message! road_th={}, veh_th={}, road_fade={}, veh_fade={}, message={}".format(road_th,veh_th,road_fade,veh_fade,message))
