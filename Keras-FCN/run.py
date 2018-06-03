@@ -50,12 +50,12 @@ answer_key = {}
 frame = 1
 
 model = zerg_model(batch_shape=[1, 320, 320, 3])
-model.load_weights('zerg_model.h5')
+model.load_weights('terran_model.h5')
 
 for rgb_frame in video:
     
     img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     seg = model.predict(img.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)

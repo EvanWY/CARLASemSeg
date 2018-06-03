@@ -32,7 +32,7 @@ import sys, skvideo.io
 frames = 1000
 
 model = zerg_model(batch_shape=[1, 320, 320, 3])
-model.load_weights('zerg_model.h5') 
+model.load_weights('terran_model.h5') 
 
 out_video = np.zeros([frames, 600, 800, 3])
 
@@ -42,7 +42,7 @@ for id in range(frames):
     img = cv2.imread('../Train/CameraRGB/%d.png' % id)
     img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
     visualization_img = img
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     seg = model.predict(img.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)

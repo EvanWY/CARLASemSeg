@@ -51,7 +51,7 @@ def zerg_generator(samples, batch_size=20):
                 # seg = seg[b:t, l:r]
                 
                 img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 
                 seg = cv2.resize(seg, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
                 seg_road = np.logical_or(seg == 7 ,seg == 6).astype(np.uint8)
@@ -79,7 +79,7 @@ class FitGenCallback(keras.callbacks.Callback):
             try:
                 img = cv2.resize(cv2.imread('visualize_imgs/rgb{0:03d}.png'.format(idx)), (320, 320), interpolation = cv2.INTER_CUBIC)
                 visualization_img = img
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 
                 z = np.zeros([20,320,320,3])
                 z[0,:,:,:] = img
@@ -97,18 +97,15 @@ class FitGenCallback(keras.callbacks.Callback):
             except:
                 print ("Unexpected error:" + sys.exc_info()[0])
 
-        model_name = 'zerg_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
+        model_name = 'terran_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
         self.model.save(model_name)
         call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
-        # call(['rm', 'zerg_model.h5'])
-        # call(['cp', model_name, 'zerg_model.h5'])
-        # call(['/home/workspace/____/tester', 'python run.py'])
 
         return
 
 if __name__ == '__main__':
     samples = []
-    for line in range(74000):
+    for line in range(130000):
         samples.append(['../Train/CameraRGB/%07d.png' % line, '../Train/CameraSeg/%07d.png' % line])
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
@@ -120,7 +117,7 @@ if __name__ == '__main__':
 
     train_mode = sys.argv[-1]
     if train_mode == 'resume':
-        model.load_weights('zerg_model.h5')
+        model.load_weights('terran_model.h5')
     elif train_mode == 'new':
         pass
     else:
@@ -141,7 +138,7 @@ if __name__ == '__main__':
         callbacks = [FitGenCallback()]
     )
 
-    model_name = 'zerg_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
+    model_name = 'terran_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
     model.save(model_name)
     call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
     exit()
