@@ -45,6 +45,7 @@ socket.bind("tcp://*:5555")
 while True:
     print ("waiting for message")
     road_th = float(socket.recv_string())
+    print ("start receiving message ...")
     socket.send()
     veh_th = float(socket.recv_string())
     socket.send()
