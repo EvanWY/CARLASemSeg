@@ -49,7 +49,8 @@ while True:
     road_fade = float(socket.recv_string())
     veh_fade = float(socket.recv_string())
     message = socket.recv_string()
-    print ("got message! message: " + message)
+    
+    print ("got message! road_th={}, veh_th={}, road_fade={}, veh_fade={}, message={}".format(road_th,veh_th,road_fade,veh_fade,message))
     file = message
 
     print ("start reading video")
