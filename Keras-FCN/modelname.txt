@@ -1,1 +1,10 @@
 s3://yang-carla-train/terran_model_20180603+230440_epoch140.h5
+s3://yang-carla-train/terran_model_20180603+224757_epoch138.h5
+s3://yang-carla-train/terran_model_20180603+224309_epoch137.h5
+s3://yang-carla-train/terran_model_20180603+223833_epoch136.h5
+s3://yang-carla-train/terran_model_20180603+223357_epoch135.h5
+s3://yang-carla-train/terran_model_20180603+222855_epoch134.h5
+s3://yang-carla-train/terran_model_20180603+222357_epoch133.h5
+s3://yang-carla-train/terran_model_20180603+221904_epoch132.h5
+s3://yang-carla-train/terran_model_20180603+221356_epoch131.h5
+s3://yang-carla-train/terran_model_20180603+220914_epoch130.h5
