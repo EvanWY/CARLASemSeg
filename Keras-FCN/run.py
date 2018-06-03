@@ -23,12 +23,17 @@ from utils.SegDataGenerator import *
 import time
 import sklearn
 from sklearn.model_selection import train_test_split
+import os
 
 file = sys.argv[-1]
 
 if file == 'run.py':
     print ("Error loading video")
     quit
+
+road_th = float(sys.argv[1])
+veh_th = float(sys.argv[2])
+
 
 # Define encoder function
 def encode(array):
@@ -54,8 +59,8 @@ for rgb_frame in video:
 
     seg = model.predict(img.reshape(1,320,320,3))
     seg = seg.reshape(320,320,2)
-    seg_road = (seg[:,:,0] > 0.6).astype(np.uint8)
-    seg_vehicle = (seg[:,:,1] > 0.3).astype(np.uint8)
+    seg_road = (seg[:,:,0] > road_th).astype(np.uint8)
+    seg_vehicle = (seg[:,:,1] > veh_th).astype(np.uint8)
     
     seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
     seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
