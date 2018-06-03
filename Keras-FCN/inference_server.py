@@ -69,7 +69,7 @@ while True:
 
 
     print ("start processing frames ...")
-    seg = np.zeros(320,320,2)
+    seg = np.zeros([320,320,2])
     for rgb_frame in video:
         
         img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
