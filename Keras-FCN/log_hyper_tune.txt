@@ -38,7 +38,7 @@ road_th: 0.55 | vehicle_th: 0.25 | Car F score: 0.784 | Car Precision: 0.635 | C
 road_th: 0.55 | vehicle_th: 0.26 | Car F score: 0.782 | Car Precision: 0.643 | Car Recall: 0.827 | Road F score: 0.974 | Road Precision: 0.984 | Road Recall: 0.936 | Averaged F score: 0.878
 road_th: 0.55 | vehicle_th: 0.27 | Car F score: 0.780 | Car Precision: 0.652 | Car Recall: 0.821 | Road F score: 0.974 | Road Precision: 0.984 | Road Recall: 0.936 | Averaged F score: 0.877
 road_th: 0.55 | vehicle_th: 0.28 | Car F score: 0.778 | Car Precision: 0.660 | Car Recall: 0.814 | Road F score: 0.974 | Road Precision: 0.984 | Road Recall: 0.936 | Averaged F score: 0.876
-road_th: 0.55 | vehicle_th: 0.29 | road_th: 0.50 | vehicle_th: 0.2 | Car F score: 0.788 | Car Precision: 0.589 | Car Recall: 0.861 | Road F score: 0.972 | Road Precision: 0.977 | Road Recall: 0.954 | Averaged F score: 0.880
+road_th: 0.50 | vehicle_th: 0.2 | Car F score: 0.788 | Car Precision: 0.589 | Car Recall: 0.861 | Road F score: 0.972 | Road Precision: 0.977 | Road Recall: 0.954 | Averaged F score: 0.880
 road_th: 0.51 | vehicle_th: 0.2 | Car F score: 0.788 | Car Precision: 0.589 | Car Recall: 0.861 | Road F score: 0.973 | Road Precision: 0.978 | Road Recall: 0.950 | Averaged F score: 0.880
 road_th: 0.52 | vehicle_th: 0.2 | Car F score: 0.788 | Car Precision: 0.589 | Car Recall: 0.861 | Road F score: 0.973 | Road Precision: 0.980 | Road Recall: 0.947 | Averaged F score: 0.881
 road_th: 0.53 | vehicle_th: 0.2 | Car F score: 0.788 | Car Precision: 0.589 | Car Recall: 0.861 | Road F score: 0.973 | Road Precision: 0.981 | Road Recall: 0.943 | Averaged F score: 0.881

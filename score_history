@@ -28,3 +28,7 @@ accuracy:
 500/500 [==============================] - 276s 551ms/step - loss: 0.0075 - val_loss: 0.0073
 Epoch 15/300
 upload: ./zerg_model_20180603+112838_epoch014.h5 to s3://yang-carla-train/zerg_model_20180603+11
+
+
+#veh_th 0.15 -> 0.25
+#road_th 0. -> 

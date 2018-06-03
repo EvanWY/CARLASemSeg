@@ -8,7 +8,7 @@ do
 done 
 
 #
-# ROAD_TH 0.57
-# VEH_TH 0.20
+# ROAD_TH 0.57 -> 0.50:0.64
+# VEH_TH 0.20 -> 0.15:0.25
 #
 
