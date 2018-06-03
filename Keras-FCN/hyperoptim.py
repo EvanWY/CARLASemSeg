@@ -23,6 +23,7 @@ from utils.SegDataGenerator import *
 import time
 import sklearn
 from sklearn.model_selection import train_test_split
+import os
 
 file = sys.argv[-1]
 
@@ -30,7 +31,8 @@ if file == 'run.py':
     print ("Error loading video")
     quit
 
-print sys.argv
+os.opoen('echo "{0}" > log.txt'.format(str(sys.argv)))
+exit()
 
 # Define encoder function
 def encode(array):
