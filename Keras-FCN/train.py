@@ -108,7 +108,7 @@ class FitGenCallback(keras.callbacks.Callback):
 
 if __name__ == '__main__':
     samples = []
-    for line in range(74000):
+    for line in range(120000):
         samples.append(['../Train/CameraRGB/%07d.png' % line, '../Train/CameraSeg/%07d.png' % line])
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.10)
