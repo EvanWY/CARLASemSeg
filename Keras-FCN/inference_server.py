@@ -25,6 +25,12 @@ import sklearn
 from sklearn.model_selection import train_test_split
 import zmq
 
+# Define encoder function
+def encode(array):
+    pil_img = Image.fromarray(array)
+    buff = BytesIO()
+    pil_img.save(buff, format="PNG")
+    return base64.b64encode(buff.getvalue()).decode("utf-8")
 
 print ("start loading model")
 model = zerg_model(batch_shape=[1, 320, 320, 3])
@@ -35,48 +41,43 @@ print ("finish loading model")
 context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5555")
-print ("waiting for message")
-message = socket.recv_string()
-print ("got message! message: " + message)
-file = message
 
-# Define encoder function
-def encode(array):
-    pil_img = Image.fromarray(array)
-    buff = BytesIO()
-    pil_img.save(buff, format="PNG")
-    return base64.b64encode(buff.getvalue()).decode("utf-8")
+while True:
+    print ("waiting for message")
+    message = socket.recv_string()
+    print ("got message! message: " + message)
+    file = message
 
-print ("start reading video")
-video = skvideo.io.vread(file)
-print ("done reading video")
+    print ("start reading video")
+    video = skvideo.io.vread(file)
+    print ("done reading video")
 
-answer_key = {}
+    answer_key = {}
 
-# Frame numbering starts at 1
-frame = 1
+    # Frame numbering starts at 1
+    frame = 1
 
 
-print ("start processing frames ...")
-for rgb_frame in video:
-    
-    img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    print ("start processing frames ...")
+    for rgb_frame in video:
+        
+        img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    seg = model.predict(img.reshape(1,320,320,3))
-    seg = seg.reshape(320,320,2)
-    seg_road = (seg[:,:,0] > 0.5).astype(np.uint8)
-    seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8)
-    
-    seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
-    seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
+        seg = model.predict(img.reshape(1,320,320,3))
+        seg = seg.reshape(320,320,2)
+        seg_road = (seg[:,:,0] > 0.5).astype(np.uint8)
+        seg_vehicle = (seg[:,:,1] > 0.5).astype(np.uint8)
+        
+        seg_road_fullsize = cv2.resize(seg_road, (800, 600), interpolation = cv2.INTER_NEAREST)
+        seg_vehicle_fullsize = cv2.resize(seg_vehicle, (800, 600), interpolation = cv2.INTER_NEAREST)
 
-    answer_key[frame] = [encode(seg_vehicle_fullsize), encode(seg_road_fullsize)]
-    
-    # Increment frame
-    frame+=1
-print ("done processing frames")
+        answer_key[frame] = [encode(seg_vehicle_fullsize), encode(seg_road_fullsize)]
+        
+        # Increment frame
+        frame+=1
+    print ("done processing frames")
 
-# Print output in proper json format
-#print (json.dumps(answer_key))
-socket.send_string(json.dumps(answer_key))
+    # Print output in proper json format
+    #print (json.dumps(answer_key))
+    socket.send_string(json.dumps(answer_key))
