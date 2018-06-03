@@ -51,7 +51,7 @@ def zerg_generator(samples, batch_size=20):
                 # seg = seg[b:t, l:r]
                 
                 img = cv2.resize(img, (320, 320), interpolation = cv2.INTER_CUBIC)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 
                 seg = cv2.resize(seg, (320, 320), interpolation = cv2.INTER_NEAREST)[:,:,2]
                 seg_road = np.logical_or(seg == 7 ,seg == 6).astype(np.uint8)
@@ -79,7 +79,7 @@ class FitGenCallback(keras.callbacks.Callback):
             try:
                 img = cv2.resize(cv2.imread('visualize_imgs/rgb{0:03d}.png'.format(idx)), (320, 320), interpolation = cv2.INTER_CUBIC)
                 visualization_img = img
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 
                 z = np.zeros([20,320,320,3])
                 z[0,:,:,:] = img
