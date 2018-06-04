@@ -113,7 +113,7 @@ if __name__ == '__main__':
     train_generator = zerg_generator(train_samples, batch_size=20)
     validation_generator = zerg_generator(validation_samples, batch_size=20)
 
-    model = zerg_model(batch_shape=[20, 320, 320, 3])
+    model = zerg_model_2(batch_shape=[20, 320, 320, 3])
 
     train_mode = sys.argv[-1]
     if train_mode == 'resume':
