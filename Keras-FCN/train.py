@@ -97,7 +97,7 @@ class FitGenCallback(keras.callbacks.Callback):
             except:
                 print ("Unexpected error:" + sys.exc_info()[0])
 
-        model_name = 'terran_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
+        model_name = 'protoss_model_{0}_epoch{1:03d}.h5'.format(datetime.datetime.now().strftime("%Y%m%d+%H%M%S"), epoch)
         self.model.save(model_name)
         call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
 
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         callbacks = [FitGenCallback()]
     )
 
-    model_name = 'terran_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
+    model_name = 'protoss_model_%s.h5'%datetime.datetime.now().strftime("%Y%m%d+%H%M%S")
     model.save(model_name)
     call(['aws', 's3', 'cp', model_name, 's3://yang-carla-train'])
     exit()
