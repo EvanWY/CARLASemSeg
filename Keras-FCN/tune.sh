@@ -25,7 +25,7 @@ do
     ROAD_TH=$i
     ROAD_FADE=0
 
-    VEH_TH=0.25
+    VEH_TH=0.24
     VEH_FADE=0
 
     # rm terran_model.h5
