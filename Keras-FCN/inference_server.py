@@ -34,7 +34,9 @@ def encode(array):
 
 print ("start loading model")
 model = zerg_model(batch_shape=[1, 320, 320, 3])
+model2 = zerg_model(batch_shape=[1, 320, 320, 3])
 model.load_weights('terran_model.h5')
+model2.load_weights('zerg_model.h5')
 print ("finish loading model")
 
 
@@ -75,14 +77,10 @@ while True:
         img = cv2.resize(rgb_frame, (320, 320), interpolation = cv2.INTER_CUBIC)
         #img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        new_seg = model.predict(img.reshape(1,320,320,3)).reshape(320,320,2)
-        if frame % 200 == 2:
-            print ('processing frame:' + str(frame))
-            seg = new_seg
-        else:
-            seg[:,:,0] *= road_fade
-            seg[:,:,1] *= veh_fade
-            seg += new_seg
+        seg = model.predict(img.reshape(1,320,320,3)).reshape(320,320,2)
+        seg2 = model2.predict(cv2.cvtColor(img, cv2.COLOR_BGR2HSV).reshape(1,320,320,3)).reshape(320,320,2)
+
+        seg = 0.5 * (seg + seg2)
 
         seg_road = (seg[:,:,0] > road_th).astype(np.uint8)
         seg_vehicle = (seg[:,:,1] > veh_th).astype(np.uint8)
