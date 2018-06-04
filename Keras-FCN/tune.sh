@@ -1,5 +1,5 @@
 #!/bin/bash 
-for i in `seq 0.23, 0.01, 0.27`;
+for i in `seq 0.23 0.01 0.27`;
 do
     ROAD_TH=0.57
     ROAD_FADE=0
@@ -20,7 +20,7 @@ do
 
 done 
 
-for i in `seq 0.54, 0.01, 0.60`;
+for i in `seq 0.54 0.01 0.60`;
 do
     ROAD_TH=$i
     ROAD_FADE=0
