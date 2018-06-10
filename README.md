@@ -46,11 +46,25 @@ In my [Vehicle Detection project](https://github.com/EvanWY/CarND-Vehicle-Detect
 
 ## Challenges
 
-### Data Augmentation
+### Data Augmentation & Recording
 
-### "Live" Training
+The original test dataset only have 1000 training images, which is not sufficient for training. If we have a system that can train at 5 fps (roughly divide "running at 10" fps by 2), it would only take 200 seconds for the training to finish an epoch.
 
-### Expand dataset
+I [randomly crop both raw image and semantic segmentation image](https://github.com/EvanWY/CARLASemSeg/blob/3bf3dc6bcc5c936e81f6f2a63481bc0125746ccd/Keras-FCN/train.py#L43-L49) at the beginning of training for every images. I also [flip the images](https://github.com/EvanWY/CARLASemSeg/blob/3bf3dc6bcc5c936e81f6f2a63481bc0125746ccd/Keras-FCN/train.py#L62-L63) to create a new training image.
+
+Beside data augmentation, I also expand the dataset by recording new data using CARLA. Here is the [script](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/record_data.py) I used to connect to CARLA simulator and save images.
+
+I [upload saved image to AWS S3](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/record_data.py#L100) for future uses.
+
+### "Live" Training - connect Trainer directly with CARLA simulator
+
+To make the system even more scalable, I setup a client-server training model, where CARLA simulator is a server and Keras trainning script is a client. Here is the "live" trining [script](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/live_train.py).
+
+In this system, the trining script and CARLA run simultaneously. Training script asks CARLA to proceed to next frame, and CARLA render next frame and return both raw image and segmentation image to the training script. Training script will train the model during this process and ask CARLA to start another episode after several frames.
+
+However, this system is not as fast as I expected. I found that the bottleneck was the CARLA rendering and starting new episode. I have to increase the amount of data augmentation.
+
+There is another drawback in this system, training images will fit into the model sequentially, not randomly, which will lead to overfitting.
 
 ### Temporal Infomation
 
@@ -59,8 +73,9 @@ In my [Vehicle Detection project](https://github.com/EvanWY/CarND-Vehicle-Detect
 ### FPS optimization: Tensorflow stating
 
 
-## Things that I would like to try
+## Things I would like to try
 
 crop image
 add time info
 fps optimize: pack testing data
+live training with multiple server
