@@ -70,7 +70,24 @@ There is another drawback in this system, training images will fit into the mode
 
 **With the client-server model, it's easy to expand to a multi-simulator system**, which means I can have a fleet of render server running simulation and connect one trainning machine to multiple simulation machine. By doing this, **we can also tackle the challenge where training image are sequential**, because multiple simulator will run in different scene.
 
-### Hyper Parameters Tuning
+### loss function & Hyper Parameters Tuning
+
+The scoring algorithm in this project seperated percision and recall, where vehicle score will more affected by recall, while road surface (drivable surface) will affected by percision. Which actually make sense because we don't want to indentify a car pixel as non-car and we don't want to identify a obstacle as drivable surface.
+
+Because of this, I decided to treat each pixel as a **multi class classification** problem instead of a **single class classification** problem, which means a pixel can be one of the 4 states:
+
+1. None
+1. Car
+1. Road
+1. Both Car and Road
+
+That sounds counter intuitive right? But because of the nature of our scoring system, it actually make sense to do so. Here is an example:
+
+Let's assume that the network is classifying pixel A, it decided A has 50% chance to be "Road", and 50% chance to be "Car", and 0% chance to be "None". Now we are filling the segmentation mask, it might give us more expectation in scoring if we set "Road" and "Car" to both true. (Paramters selected in our scoring system made it not likely to happen, but this implementation still make it easier to tune the result)
+
+Eventually, that give me 2 parameters to tune: the threshold for both "Car" and "Road"
+
+I used [this script](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/hyperoptim.py) to tune the two hyperparameters. Because the two hyperparameters are independent from each other, I can tune them seperately to get the best result for both Car and Road.
 
 ### Temporal Infomation
 
