@@ -89,13 +89,36 @@ Eventually, that give me 2 parameters to tune: the threshold for both "Car" and 
 
 I used [this script](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/hyperoptim.py) to tune the two hyperparameters. Because the two hyperparameters are independent from each other, I can tune them seperately to get the best result for both Car and Road.
 
-### Temporal Infomation
-
 ### FPS optimization: Tensorflow stating
 
-## Things I would like to try
+I noticed that the actual validation process can run above 10 FPS, while tensorflow initialization take up a lot of time which decrease the FPS to lower than 10 FPS. To optimize the FPS, I use the client-server architecture, using a [backend](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/inference_server.py) running Keras, which is already initialized and waiting for the [client](https://github.com/EvanWY/CARLASemSeg/blob/master/Keras-FCN/inference_client.py) to connect. 
 
-crop image
-add time info
-fps optimize: pack testing data
-live training with multiple server
+### Temporal Information
+
+After finishing all optimization/tuning above, I started to train the model for the last time, and validation loss stays at around 0.0073. At this point, I am thinking about what else I can do to improve the system even more.
+
+This time, I stop looking at details, I view the whole system as a **black box**, and I realize that if I want to improve the system even more, I'll need to input more information to the system. (preprocessing such as converting colorspace doesn't add information, it just preprocess the data to make it easier to learn, which can eventually learn by the neural network)
+
+I decided that temporal information is the new information I'll add to the system. I came up with 3 solutions:
+1. Recurrent Neural Network
+1. Stacking multiple frames as input to FCN.
+1. Add a heatmap to the result, which preserve segmentation information for next frame.
+
+At this point, I only have couple hours to deadline, I don't have time to train a new network, so I decided to do the heatmap trick.
+
+The basic idea is to mix the segmentation from last frame with the current frame, with a parameter "Fade". The new pixel value would be *Fade * oldPixel + (1-Fade) * newPixel*
+
+## Things I would like to try
+Here are something I would like to try to improve my system:
+
+### Multi Render Server "Live" Training
+As mentioned aboved, I belive having multiple server running CARLA would make the live training much better.
+
+### Crop Image
+Initially I have the idea of **transfer learning**, which is to use existing model and it's weight. Which force me to fit my image size with the pre-trained model (320x320). In the end I train the entire model from scratch, which means I probably could have better tuned the model layer sizes according to the images.
+
+### Time Information
+As mentioned above, I belive both recurrent neural network and stacking multiple frames as input to FCN could imporve the system a lot by providing temporal information.
+
+### Fps optimize: pack testing data
+When running on scoring, I'm using frame by frame validation. I believe the FPS will inprove if I pack multiple frames together before sending into the model.
