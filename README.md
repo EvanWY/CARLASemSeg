@@ -66,12 +66,15 @@ However, this system is not as fast as I expected. I found that the bottleneck w
 
 There is another drawback in this system, training images will fit into the model sequentially, not randomly, which will lead to overfitting.
 
-### Temporal Infomation
+**Things I would like to try:**
+
+**With the client-server model, it's easy to expand to a multi-simulator system**, which means I can have a fleet of render server running simulation and connect one trainning machine to multiple simulation machine. By doing this, **we can also tackle the challenge where training image are sequential**, because multiple simulator will run in different scene.
 
 ### Hyper Parameters Tuning
 
-### FPS optimization: Tensorflow stating
+### Temporal Infomation
 
+### FPS optimization: Tensorflow stating
 
 ## Things I would like to try
 
